@@ -23,6 +23,7 @@
 - Node.js executable?
 - Website hosted on a Pi?
 - Website hosted in the cloud?
+- Website temporarily hosted on PC?
 - Chrome/ChromeOS extension?
 
 Could probably start with a simple Node.js script to add items and pick random items.
