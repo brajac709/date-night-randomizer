@@ -19,7 +19,7 @@
 ### How/Where will it run?
 - Android App?
 - Bash script?
-- Node.js sript?
+- Node.js script?
 - Node.js executable?
 - Website hosted on a Pi?
 - Website hosted in the cloud?
