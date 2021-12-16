@@ -8,6 +8,14 @@ export class Randomizer<T> {
     }
 
     pick() {
-        return isNullOrUndefined(this.data) ? Math.random() : Math.floor(Math.random() * this.data.length);
+        if (isNullOrUndefined(this.data) || this.data.length == 0)
+        {
+            return null;
+        }
+        const idx = Math.floor(Math.random() * this.data.length);
+        const retVal = this.data[idx];
+        this.data.splice(idx, 1);
+
+        return retVal;
     }
 }
