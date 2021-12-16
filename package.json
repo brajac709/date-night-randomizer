@@ -1,0 +1,18 @@
+{
+  "name": "date-night-randomizer",
+  "version": "0.0.1",
+  "description": "DateNightRandomizer",
+  "main": "app.js",
+  "author": {
+    "name": "Brady Jacobs"
+  },
+  "scripts": {
+    "build": "npm run --prefix src/DateNightRandomizerConsole build",
+    "clean": "npm run --prefix src/DateNightRandomizerConsole clean",
+    "start": "node src/DateNightRandomizerConsole/dist/app.js"
+  },
+  "devDependencies": {
+    "@types/node": "^8.0.14",
+    "typescript": "^3.2.2"
+  }
+}
