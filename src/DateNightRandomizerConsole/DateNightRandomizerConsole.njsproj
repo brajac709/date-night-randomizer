@@ -37,6 +37,11 @@
   <ItemGroup>
     <Folder Include="App\" />
   </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="App\randomizer.ts">
+      <SubType>Code</SubType>
+    </TypeScriptCompile>
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsToolsV2.targets" />
   <ProjectExtensions>
     <VisualStudio>
