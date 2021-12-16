@@ -40,4 +40,8 @@ May move to Gist later.
 Will probably never need a database
 
 
+## Things to look into
+- React Native (Android): https://docs.microsoft.com/en-us/windows/dev-environment/javascript/react-native-for-android
+    - links to React Native for Windows can be found on those pages
+
 
