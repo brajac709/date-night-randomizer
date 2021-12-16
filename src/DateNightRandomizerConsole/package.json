@@ -1,10 +1,10 @@
 {
   "name": "date-night-randomizer-console",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "DateNightRandomizerConsole",
   "main": "app.js",
   "author": {
-    "name": ""
+    "name": "Brady Jacobs"
   },
   "scripts": {
     "build": "tsc --build",
