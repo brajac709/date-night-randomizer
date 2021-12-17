@@ -4,5 +4,5 @@
 # but for now I only plan to use Gitpod for this repo
 
 # Set-up Git Aliases
-git config alias.co = checkout
-git config alias.tree = log --graph --oneline
+git config --global --add alias.co 'checkout'
+git config --global --add alias.tree 'log --graph --oneline'
