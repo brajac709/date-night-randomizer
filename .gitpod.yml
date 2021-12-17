@@ -19,6 +19,6 @@ github:
     branches: true
     pullRequests: true
     pullRequestsFromForks: false
-    addComment: true
+    addComment: false
     addBadge: true
 
