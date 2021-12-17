@@ -1,6 +1,8 @@
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
   - init: |-
+      ./.gitpod/setup.sh
+  - init: |-
       echo 'init script'; # runs during prebuild
       npm install;
     command: echo 'start script'
