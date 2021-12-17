@@ -5,6 +5,7 @@ tasks:
   - init: |-
       echo 'init script'; # runs during prebuild
       npm install;
+      npm run build;
     command: echo 'start script'
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
