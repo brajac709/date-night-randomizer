@@ -21,6 +21,14 @@ export class SettingsProvider {
                     else {
                         reject(err); // TODO throw err????
                     }
+                    return;
+                }
+
+                if (data == '') {
+                    const settings = this.createDefaultSettings();
+                    this.set(settings).then(() => resolve(settings), (reason) => reject(reason))
+
+                    return;
                 }
 
                 const settings = this.parseSettings(data);

@@ -5,6 +5,7 @@
 
 # Custom Definitions
 dist/
+test.json
 
 # User-specific files
 *.rsuser
