@@ -16,21 +16,22 @@ const testRandomizer = () => {
     console.log('--- End testRandomizer() ---');
 }
 
-const testSettingsProvider = () => {
+const testSettingsProvider = async () => {
     console.log('--- Begin testSettingsProvider() ---');
     const provider = SettingsProvider;
 
-    provider.get()
-        .then((settings) => {
-            console.log(settings);
-            settings.events.push({
-                eventName : 'Kona Grill',
-                eventDescription: 'Pumpkin Spice',
-            })
-            return provider.set(settings);
-         })
-         .then(() => provider.get().then((settings) => console.log(settings)))
-         .then(() => console.log('--- End testSettingsProvider() ---'));
+    const settings = await provider.get();
+    console.log(settings);
+    settings.events.push({
+        eventName : 'Kona Grill',
+        eventDescription: 'Pumpkin Spice',
+    });
+    await provider.set(settings);
+
+    const newSettings = await provider.get();
+    console.log(newSettings);
+
+    console.log('--- End testSettingsProvider() ---');
 }
 
 /******************************/
