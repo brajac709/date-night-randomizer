@@ -1,6 +1,7 @@
 import { Randomizer } from './randomizer';
 import { DateNightData } from './dateNightData';
-import { SettingsProvider } from './settingsProvider';
+//import { SettingsProvider } from './settingsProvider';
+import { SettingsProviderNS as SettingsProvider } from './settingsProvider';
 
 const testRandomizer = () => {
     console.log('--- Begin testRandomizer() ---');
@@ -17,7 +18,7 @@ const testRandomizer = () => {
 
 const testSettingsProvider = () => {
     console.log('--- Begin testSettingsProvider() ---');
-    const provider = new SettingsProvider();
+    const provider = SettingsProvider;
 
     provider.get()
         .then((settings) => {
