@@ -1,7 +1,10 @@
 import * as fs from 'fs';
 
 export class ConfigManager {
-    private static fileName : string = "./config.json";
+    // TODO figure out a better way specify this path
+    // maybe an environment variable???  
+    // Or is there a way to embed stuff in a node build?
+    private static fileName : string = "src/DateNightRandomizerConsole/dist/config.json";
     private static _instance : ConfigManager;
 
     private _data : ConfigData;
@@ -11,6 +14,7 @@ export class ConfigManager {
         this._dataPromise = new Promise<void>((resolve, reject) => {
             fs.readFile(ConfigManager.fileName, 'utf8', (err, data) => {
                 if (err)  {
+                    console.log("Failed to get Config: " + err);
                     reject(err); 
                     return;
                 }
