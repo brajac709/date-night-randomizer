@@ -9,7 +9,8 @@
   "scripts": {
     "build": "npm run --prefix src/DateNightRandomizerConsole build",
     "clean": "npm run --prefix src/DateNightRandomizerConsole clean",
-    "start": "node src/DateNightRandomizerConsole/dist/app.js"
+    "start": "node src/DateNightRandomizerConsole/dist/app.js",
+    "debug": "node --inspect src/DateNightRandomizerConsole/dist/app.js"
   },
   "devDependencies": {
     "@types/node": "^8.0.14",
