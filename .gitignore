@@ -6,6 +6,7 @@
 # Custom Definitions
 dist/
 test.json
+settings.json
 
 # User-specific files
 *.rsuser

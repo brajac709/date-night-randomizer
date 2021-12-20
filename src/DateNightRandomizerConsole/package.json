@@ -7,8 +7,9 @@
     "name": "Brady Jacobs"
   },
   "scripts": {
-    "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "build": "tsc --build; npm run copy-files",
+    "clean": "tsc --build --clean",
+    "copy-files" : "cp App/config.json dist/config.json"
   },
   "devDependencies": {
     "@types/node": "^8.0.14",
