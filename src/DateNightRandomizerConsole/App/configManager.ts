@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 
 export class ConfigManager {
-    private static _instance : ConfigManager;
     private static fileName : string = "./config.json";
+    private static _instance : ConfigManager;
 
     private _data : ConfigData;
     private _dataPromise : Promise<void>;
@@ -28,12 +28,19 @@ export class ConfigManager {
         });
     }
 
-    getInstance() : ConfigManager {
+    static async getInstance() : Promise<ConfigManager> {
         if (!ConfigManager._instance) {
             ConfigManager._instance = new ConfigManager();
         }
 
-        return ConfigManager._instance;
+        const result = await ConfigManager._instance.whenReady();
+
+        return result ? ConfigManager._instance : null;
+    }
+
+    private async whenReady() : Promise<boolean> {
+        return this._dataPromise
+            .then(() => true, () => false);
     }
 
     get(index : string) : any {
@@ -41,6 +48,6 @@ export class ConfigManager {
     }
 }
 
-export class ConfigData {
+class ConfigData {
     readonly [index : string] : any 
 }

@@ -2,6 +2,7 @@ import { Randomizer } from './randomizer';
 import { DateNightData } from './dateNightData';
 //import { SettingsProvider } from './settingsProvider';
 import { SettingsProvider } from './settingsProvider';
+import { ConfigManager } from './configManager';
 
 const testRandomizer = () => {
     console.log('--- Begin testRandomizer() ---');
@@ -34,12 +35,36 @@ const testSettingsProvider = async () => {
     console.log('--- End testSettingsProvider() ---');
 }
 
+const testConfigManager = async () => {
+    console.log('--- Begin testConfigManager() ---');
+
+    const configManager = await ConfigManager.getInstance();
+
+    if (configManager == null)
+    {
+        console.log("Unable to retrieve configuration");
+    }
+    else 
+    {
+        console.log(configManager.get("settingsFile"));
+    }
+
+    console.log('--- End testConfigManager() ---');
+}
+
 /******************************/
 
-console.log('Hello world');
+const main = async() => {
+    console.log('Hello world');
 
-testRandomizer();
+    testRandomizer();
 
-testSettingsProvider();
+    await testSettingsProvider();
+
+    await testConfigManager();
+}
+
+main();
+
 
 
