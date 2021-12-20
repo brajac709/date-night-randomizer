@@ -54,7 +54,17 @@ const testConfigManager = async () => {
 
 /******************************/
 
+const initialize = async() => {
+    const configManager = await ConfigManager.getInstance();
+
+    if (configManager == null) {
+        throw new Error("Failed to get config");
+    }
+}
+
 const main = async() => {
+    await initialize();
+
     console.log('Hello world');
 
     testRandomizer();
