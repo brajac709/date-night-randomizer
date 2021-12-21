@@ -3,6 +3,8 @@ import { DateNightData } from './dateNightData';
 //import { SettingsProvider } from './settingsProvider';
 import { SettingsProvider } from './settingsProvider';
 import { ConfigManager } from './configManager';
+import { ConsoleApp } from './consoleApp';
+import { RandomizerApp } from './randomizerApp';
 
 const testRandomizer = () => {
     console.log('--- Begin testRandomizer() ---');
@@ -62,9 +64,7 @@ const initialize = async() => {
     }
 }
 
-const main = async() => {
-    await initialize();
-
+const test = async() => {
     console.log('Hello world');
 
     testRandomizer();
@@ -72,6 +72,22 @@ const main = async() => {
     await testSettingsProvider();
 
     await testConfigManager();
+}
+
+const main = async() => {
+    await initialize();
+
+    // TODO check configuration to determine which app to start
+    // or whether to run test 
+
+    if (false) {
+        await test();
+    } else {
+        const baseApp  = await RandomizerApp.getInstance();
+        const consoleApp = new ConsoleApp(baseApp);
+
+        await consoleApp.run();
+    }
 }
 
 main();
