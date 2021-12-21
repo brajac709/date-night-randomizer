@@ -5,4 +5,12 @@ export class Settings {
     // TODO may use another class with additional metadata 
     // eg. Date Popped, Event Ratings, ????
     poppedEvents : DateNightData[];
+
+
+    static default() : Settings {
+        return { 
+            events: [],
+            poppedEvents: [],
+        };
+    }
 }

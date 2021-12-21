@@ -20,7 +20,7 @@ export namespace SettingsProvider {
                 if (err)  {
                     if(err.code == 'ENOENT')
                     {
-                        const settings = createDefaultSettings();
+                        const settings = Settings.default();
                         set(settings).then(() => resolve(settings), (reason) => reject(reason))
                     }
                     else {
@@ -30,7 +30,7 @@ export namespace SettingsProvider {
                 }
 
                 if (data == '') {
-                    const settings = createDefaultSettings();
+                    const settings = Settings.default();
                     set(settings).then(() => resolve(settings), (reason) => reject(reason))
 
                     return;
@@ -57,13 +57,6 @@ export namespace SettingsProvider {
             });
         });
         return promise;
-    }
-
-    // TODO maybe this should exist statically in settings.ts???
-    export function createDefaultSettings() : Settings {
-        return { 
-            events: []
-        };
     }
 
     // TODO this may come from a separate Serializer/Deserializer class 
