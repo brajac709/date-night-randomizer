@@ -2,6 +2,9 @@ import { RandomizerApp } from "./randomizerApp";
 import { promisify } from "util";
 import  * as readline from "readline";
 import {stdin, stdout} from "process";
+import { DateNightData } from "./dateNightData";
+
+const enterToContinue = "Press ENTER to continue...";
 
 export class ConsoleApp {
     private readonly _randomizerApp : RandomizerApp;
@@ -67,21 +70,45 @@ export class ConsoleApp {
 
     private async addEventMenu() {
         console.log("addEventMenu")
+        console.log("Add Event:");
+        const name = await this._question("Event Name: ");
+        const desc = await this._question("Event Description: ");
+
+        const event : DateNightData = {
+            eventName : name,
+            eventDescription : desc
+        };
+
+        await this._randomizerApp.addEvent(event);
+        const _ = await this._question(enterToContinue);
     }
 
     private async popEventMenu() {
-        console.log("popEventMenu")
+        console.log("Popping Event...");
+        const event = await this._randomizerApp.popEvent();
+
+        console.log(event);
+        const _ = await this._question(enterToContinue);
     }
 
     private async recyclePoppedEventsMenu() {
-        console.log("recyclePoppedEventsMenu")
+        console.log("Recycling events...");
+        await this._randomizerApp.recyclePoppedEvents();
+        const _ = await this._question(enterToContinue);
     }
 
     private async listPoppedEventsMenu() {
-        console.log("listPoppedEventsMenu")
+        var events = this._randomizerApp.getPoppedEvents();
+
+        console.log("Popped Events: ");
+        console.log(JSON.stringify(events,null, 2));
+        const _ = await this._question(enterToContinue);
     }
 
     private async numberOfEventsMenu() {
-        console.log("numberOfEventsMenu")
+        var num = this._randomizerApp.numberOfEvents();
+        console.log("Number of Events Remaining: " + num);
+
+        const _ = await this._question(enterToContinue);
     }
 }
