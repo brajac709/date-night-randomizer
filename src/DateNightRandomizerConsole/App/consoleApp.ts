@@ -69,7 +69,6 @@ export class ConsoleApp {
     }
 
     private async addEventMenu() {
-        console.log("addEventMenu")
         console.log("Add Event:");
         const name = await this._question("Event Name: ");
         const desc = await this._question("Event Description: ");

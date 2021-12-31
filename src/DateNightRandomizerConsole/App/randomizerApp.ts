@@ -7,19 +7,18 @@ export class RandomizerApp {
     private static _instance : RandomizerApp
 
     private _settings : Settings;
+    private _settingsProvider : SettingsProvider.SettingsProvider;
     private _settingsPromise : Promise<void>;
 
     private constructor() {
-        this._settingsPromise = new Promise<void>((resolve, reject) => {
-            SettingsProvider.get().then((settings) => {
-                this._settings = settings;
-                resolve();
-            }, (err) => {
-                this._settings = null;
-                resolve();
-            });
-        });
+        this._settingsPromise = this.initialize()
     };
+
+    private async initialize() {
+        this._settingsProvider = await SettingsProvider.getSettingsProvider();
+
+        this._settings = await this._settingsProvider.get();
+    }
 
     static async getInstance() : Promise<RandomizerApp> {
         if (!RandomizerApp._instance) {
@@ -39,7 +38,7 @@ export class RandomizerApp {
         // TODO add duplicate checking???
         this._settings.events.push(event);
 
-        return SettingsProvider.set(this._settings);
+        return this._settingsProvider.set(this._settings);
     };
 
     async popEvent() {
@@ -57,7 +56,7 @@ export class RandomizerApp {
         // TODO may want to transform data type
         this._settings.poppedEvents.push(retVal);
 
-        await SettingsProvider.set(this._settings);
+        await this._settingsProvider.set(this._settings);
 
         return retVal;
     };
@@ -67,7 +66,7 @@ export class RandomizerApp {
         this._settings.poppedEvents.splice(0,this._settings.poppedEvents.length);
         // TODO add duplicate checking???
 
-        return await SettingsProvider.set(this._settings);
+        return await this._settingsProvider.set(this._settings);
     }
 
     numberOfEvents() {

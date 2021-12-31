@@ -5,6 +5,8 @@ import { SettingsProvider } from './settingsProvider';
 import { ConfigManager } from './configManager';
 import { ConsoleApp } from './consoleApp';
 import { RandomizerApp } from './randomizerApp';
+import { env } from 'process';
+import { Octokit } from '@octokit/core';
 
 const testRandomizer = () => {
     console.log('--- Begin testRandomizer() ---');
@@ -21,10 +23,15 @@ const testRandomizer = () => {
 
 const testSettingsProvider = async () => {
     console.log('--- Begin testSettingsProvider() ---');
-    const provider = SettingsProvider;
+    const provider = await SettingsProvider.getSettingsProvider();
 
     const settings = await provider.get();
     console.log(settings);
+
+    if (!settings.events) {
+        settings.events = [];
+    }
+
     settings.events.push({
         eventName : 'Kona Grill',
         eventDescription: 'Pumpkin Spice',
@@ -54,6 +61,25 @@ const testConfigManager = async () => {
     console.log('--- End testConfigManager() ---');
 }
 
+const testGists = async() => {
+    console.log('--- Start testGists() ---');
+
+    const configManager = await ConfigManager.getInstance();
+
+    const octokit = new Octokit({ auth: env.GIST_TOKEN });
+
+    const gistId = configManager.get("gistId");
+    const settingsFile = configManager.get("settingsFile");
+
+    const { data } = await octokit.request('GET /gists/' + gistId);
+
+    console.log(data);
+
+    console.log(data.files[settingsFile]);
+
+    console.log('--- End testGists() ---');
+}
+
 /******************************/
 
 const initialize = async() => {
@@ -72,6 +98,8 @@ const test = async() => {
     await testSettingsProvider();
 
     await testConfigManager();
+
+    await testGists();
 }
 
 const main = async() => {
@@ -80,7 +108,11 @@ const main = async() => {
     // TODO check configuration to determine which app to start
     // or whether to run test 
 
-    if (false) {
+    const configManager = await ConfigManager.getInstance();
+
+    const runTests = configManager.get("runTests");
+
+    if (runTests) {
         await test();
     } else {
         const baseApp  = await RandomizerApp.getInstance();
