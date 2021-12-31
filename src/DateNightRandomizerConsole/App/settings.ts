@@ -1,3 +1,4 @@
+import { isNullOrUndefined } from 'util';
 import { DateNightData } from './dateNightData';
 
 export class Settings {
@@ -12,5 +13,11 @@ export class Settings {
             events: [],
             poppedEvents: [],
         };
+    }
+
+    static verify(data : any) : boolean {
+        const props = ["events", "poppedEvents"];
+
+        return props.reduce((acc,  val) => acc && !isNullOrUndefined(data[val]), true);
     }
 }

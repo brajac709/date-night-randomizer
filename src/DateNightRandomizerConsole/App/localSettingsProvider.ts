@@ -35,6 +35,11 @@ export class LocalSettingsProvider implements SettingsProvider.SettingsProvider
 
             const settings = SettingsProvider.parseSettings(data);
 
+            if (!Settings.verify(settings))
+            {
+                return await this.createDefault();
+            }
+
             return settings;
 
         } catch (err) {

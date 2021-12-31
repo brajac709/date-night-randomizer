@@ -46,7 +46,12 @@ export class RemoteSettingsProvider implements SettingsProvider.SettingsProvider
         }
         else 
         {
-            return SettingsProvider.parseSettings(file.content);
+            const settings = SettingsProvider.parseSettings(file.content);
+            
+            if (!Settings.verify(settings)) {
+                return await this.createDefault();
+            }
+            return settings;
         }
     }
 
@@ -75,7 +80,6 @@ export class RemoteSettingsProvider implements SettingsProvider.SettingsProvider
     }
 
     private async createDefault() : Promise<Settings> {
-        // TODO create gist file
         const settings = Settings.default();
         await this.set(settings);
         return settings;
