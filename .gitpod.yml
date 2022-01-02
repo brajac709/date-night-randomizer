@@ -4,9 +4,9 @@ tasks:
       echo 'init script'; # runs during prebuild
       npm install;
       npm run build;
+    command: |-
+      echo 'start script'
       ./.gitpod/setup.sh;
-    #TODO may need to run setup in command
-    command: echo 'start script'
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 #ports:
