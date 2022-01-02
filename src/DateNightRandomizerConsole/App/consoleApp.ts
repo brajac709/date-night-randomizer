@@ -24,7 +24,7 @@ const buildMenuString = (options : string[]) : string => {
     const lines = [
         "*********************", 
         "Select Option:",  
-        ...options.map((val, idx) => "  " + (idx+1) + ". " + val),
+        ...options.map((val, idx) => `  ${idx+1}. ${val}`),
         "  Else. Exit",
         "Enter? ",
     ];
@@ -135,7 +135,7 @@ export class ConsoleApp {
 
     private async numberOfEventsMenu() {
         var num = this._randomizerApp.numberOfEvents();
-        console.log("Number of Events Remaining: " + num);
+        console.log(`Number of Events Remaining: ${num}`);
 
         const _ = await this._question(enterToContinue);
     }

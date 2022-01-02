@@ -14,7 +14,7 @@ export class ConfigManager {
         this._dataPromise = new Promise<void>((resolve, reject) => {
             fs.readFile(ConfigManager.fileName, 'utf8', (err, data) => {
                 if (err)  {
-                    console.log("Failed to get Config: " + err);
+                    console.log(`Failed to get Config: ${err}`);
                     reject(err); 
                     return;
                 }

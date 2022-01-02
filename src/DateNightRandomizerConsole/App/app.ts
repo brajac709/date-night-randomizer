@@ -28,9 +28,6 @@ const testSettingsProvider = async () => {
     const settings = await provider.get();
     console.log(settings);
 
-    if (!settings.events) {
-        settings.events = [];
-    }
 
     settings.events.push({
         eventName : 'Kona Grill',
@@ -71,7 +68,7 @@ const testGists = async() => {
     const gistId = configManager.get("gistId");
     const settingsFile = configManager.get("settingsFile");
 
-    const { data } = await octokit.request('GET /gists/' + gistId);
+    const { data } = await octokit.request(`GET /gists/${gistId}`);
 
     console.log(data);
 
