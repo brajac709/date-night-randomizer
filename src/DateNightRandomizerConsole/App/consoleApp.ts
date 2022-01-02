@@ -3,8 +3,35 @@ import { promisify } from "util";
 import  * as readline from "readline";
 import {stdin, stdout} from "process";
 import { DateNightData } from "./dateNightData";
+import { ConfigManager } from "./configManager";
 
 const enterToContinue = "Press ENTER to continue...";
+
+const menuOptions = [
+    "Add Event",
+    "Pop Event",
+    "Recycle Popped Event",
+    "List Popped Events",
+    "Number of Events",
+];
+
+const debugOptions = [
+    "Reinitialize Settings",
+];
+
+
+const buildMenuString = (options : string[]) : string => {
+    const lines = [
+        "*********************", 
+        "Select Option:",  
+        ...options.map((val, idx) => "  " + (idx+1) + ". " + val),
+        "  Else. Exit",
+        "Enter? ",
+    ];
+
+    return lines.reduce((acc, val) => acc + val + "\n", "");
+}
+
 
 export class ConsoleApp {
     private readonly _randomizerApp : RandomizerApp;
@@ -31,22 +58,20 @@ export class ConsoleApp {
     }
 
     private async mainMenu() {
-        // TODO probably move this to a static namespace
-        const menuString = 
-        "*********************\n" +
-        "Select Option:\n" + 
-        "  1. Add Event\n" +
-        "  2. Pop Event\n" + 
-        "  3. Recycle Popped Event\n" + 
-        "  4. List Popped Events\n" + 
-        "  5. Number of events\n" +
-        "  Else. Exit\n" +
-        "Enter? \n"
-        ;
+        const configManager = await ConfigManager.getInstance();
 
+        const debugMode = configManager.get("debugMode");
+
+        const options = [...menuOptions];
+        if (debugMode) {
+            options.push(...debugOptions);
+        }
+
+        const menuString = buildMenuString(options);
         const response = await this._question(menuString);
 
         switch(response) {
+            // TODO may want to map functions in the array
             case "1":
                 await this.addEventMenu();
                 return 1;
@@ -62,10 +87,14 @@ export class ConsoleApp {
             case "5":
                 await this.numberOfEventsMenu();
                 return 5;
+            case "6":
+                if (debugMode) {
+                    await this.reinitializeMenu();
+                    return 6;
+                }
             default:
                 return -1
         }
-
     }
 
     private async addEventMenu() {
@@ -107,6 +136,14 @@ export class ConsoleApp {
     private async numberOfEventsMenu() {
         var num = this._randomizerApp.numberOfEvents();
         console.log("Number of Events Remaining: " + num);
+
+        const _ = await this._question(enterToContinue);
+    }
+
+    private async reinitializeMenu() {
+        await this._randomizerApp.reinitializeSettings();
+
+        console.log("Settings Reset");
 
         const _ = await this._question(enterToContinue);
     }

@@ -76,4 +76,9 @@ export class RandomizerApp {
     getPoppedEvents() : ReadonlyArray<DateNightData> {
         return this._settings.poppedEvents;
     }
+
+    async reinitializeSettings() {
+        this._settings = Settings.default();
+        return await this._settingsProvider.set(this._settings);
+    }
 }
