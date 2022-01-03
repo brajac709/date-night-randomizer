@@ -4,26 +4,22 @@ import  * as readline from "readline";
 import {stdin, stdout} from "process";
 import { DateNightData } from "./dateNightData";
 import { ConfigManager } from "./configManager";
+import { SSL_OP_NO_TLSv1_1 } from "constants";
 
 const enterToContinue = "Press ENTER to continue...";
 
-const menuOptions = [
-    "Add Event",
-    "Pop Event",
-    "Recycle Popped Event",
-    "List Popped Events",
-    "Number of Events",
-];
+interface MenuOption {
+    prompt : string,
+    fcn : () => Promise<void>
+}
 
-const debugOptions = [
-    "Reinitialize Settings",
-];
-
-
-const buildMenuString = (options : string[]) : string => {
+const buildMenuString = (options : string[], prompt? : string[]) : string => {
+    if (prompt === undefined) {
+        prompt = [ "Select Option:"]
+    }
     const lines = [
         "*********************", 
-        "Select Option:",  
+        ...prompt,
         ...options.map((val, idx) => `  ${idx+1}. ${val}`),
         "  Else. Exit",
         "Enter? ",
@@ -32,17 +28,32 @@ const buildMenuString = (options : string[]) : string => {
     return lines.reduce((acc, val) => acc + val + "\n", "");
 }
 
-
 export class ConsoleApp {
     private readonly _randomizerApp : RandomizerApp;
     private readonly _rl : readline.ReadLine;
     private readonly _question : (query:string ) => Promise<string>; 
+
+    private readonly _menuOptions : MenuOption[] = [
+        { prompt: "Add Event", fcn: this.addEventMenu },
+        { prompt: "Pop Event", fcn: this.popEventMenu },
+        { prompt: "Recycle Popped Event", fcn: this.recyclePoppedEventsMenu },
+        { prompt: "List Popped Events", fcn: this.listPoppedEventsMenu },
+        { prompt: "Number of Events", fcn: this.numberOfEventsMenu },
+        { prompt: "Remove Popped Event", fcn: this.removePoppedEventMenu },
+    ];
+
+    private readonly  _debugOptions : MenuOption[] = [
+        { prompt: "Reinitialize Settings", fcn: this.reinitializeMenu },
+        { prompt: "List Events", fcn: this.listEventsMenu },
+        { prompt: "Remove Event", fcn: this.removeEventMenu },
+    ];
 
     constructor(randomizerApp : RandomizerApp) {
         this._randomizerApp = randomizerApp;
         this._rl = readline.createInterface(stdin, stdout)
         this._question = promisify(this._rl.question).bind(this._rl);
     }
+
 
     async run() {
         var done = false;
@@ -62,39 +73,27 @@ export class ConsoleApp {
 
         const debugMode = configManager.get("debugMode");
 
-        const options = [...menuOptions];
+        const options = [...this._menuOptions];
         if (debugMode) {
-            options.push(...debugOptions);
+            options.push(...this._debugOptions);
         }
 
-        const menuString = buildMenuString(options);
+        const menuString = buildMenuString(options.map(val => val.prompt));
         const response = await this._question(menuString);
 
-        switch(response) {
-            // TODO may want to map functions in the array
-            case "1":
-                await this.addEventMenu();
-                return 1;
-            case "2":
-                await this.popEventMenu();
-                return 2;
-            case "3":
-                await this.recyclePoppedEventsMenu();
-                return 3;
-            case "4":
-                await this.listPoppedEventsMenu();
-                return 4;
-            case "5":
-                await this.numberOfEventsMenu();
-                return 5;
-            case "6":
-                if (debugMode) {
-                    await this.reinitializeMenu();
-                    return 6;
-                }
-            default:
-                return -1
+
+        const idx = Number.parseInt(response);
+        if (Number.isNaN(idx)) {
+            return -1;
         }
+
+        const entry = options[idx-1];
+        if (entry === undefined) {
+            return -1;
+        }
+
+        await entry.fcn.bind(this)();
+        return idx;
     }
 
     private async addEventMenu() {
@@ -133,11 +132,79 @@ export class ConsoleApp {
         const _ = await this._question(enterToContinue);
     }
 
+    private async listEventsMenu() {
+        var events = this._randomizerApp.getEvents();
+
+        console.log("Events: ");
+        console.log(JSON.stringify(events,null, 2));
+        const _ = await this._question(enterToContinue);
+    }
+
     private async numberOfEventsMenu() {
         var num = this._randomizerApp.numberOfEvents();
         console.log(`Number of Events Remaining: ${num}`);
 
         const _ = await this._question(enterToContinue);
+    }
+
+    private async removePoppedEventMenu() {
+        const events = this._randomizerApp.getPoppedEvents();
+        
+        await this.removeGeneralMenu(
+            events, 
+            this._randomizerApp.removePoppedEvent.bind(this._randomizerApp));
+    }
+
+    private async removeEventMenu() {
+        const events = this._randomizerApp.getEvents();
+
+        await this.removeGeneralMenu(
+            events, 
+            this._randomizerApp.removeEvent.bind(this._randomizerApp));
+    }
+
+    private async removeGeneralMenu(
+        events : readonly DateNightData[], 
+        removeFcn : (idx :number) => Promise<void>) 
+    {
+        const prompt = [
+            "Select Event To Remove",
+            "(Negative to print description)",
+        ]
+
+        const options = events.map(val => val.eventName);
+
+        const menuString  = buildMenuString(options, prompt);
+
+        while (true) {
+            const response = await this._question(menuString);
+
+            let idx = Number.parseInt(response);
+            if (Number.isNaN(idx)) {
+                break;
+            }
+
+            let showDesc = false;
+            if (idx < 0) {
+                showDesc = true;
+                idx *= -1;
+            }
+
+            const entry = events[idx-1];
+            if (entry === undefined) {
+                break
+            }
+
+            if (showDesc) {
+                console.log(entry.eventDescription);
+                const _ = await this._question(enterToContinue);
+            } else {
+                await removeFcn(idx-1);
+                console.log("Event removed");
+                const _ = await this._question(enterToContinue);
+                break;
+            }
+        }
     }
 
     private async reinitializeMenu() {

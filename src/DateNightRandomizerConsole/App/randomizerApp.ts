@@ -73,12 +73,26 @@ export class RandomizerApp {
         return this._settings.events.length;
     }
 
+    async reinitializeSettings() {
+        this._settings = Settings.default();
+        return await this._settingsProvider.set(this._settings);
+    }
+
+    async removePoppedEvent(idx: number) {
+        this._settings.poppedEvents.splice(idx,1);
+        return await this._settingsProvider.set(this._settings);
+    }
+
+    async removeEvent(idx: number) {
+        this._settings.events.splice(idx,1);
+        return await this._settingsProvider.set(this._settings);
+    }
+
     getPoppedEvents() : ReadonlyArray<DateNightData> {
         return this._settings.poppedEvents;
     }
 
-    async reinitializeSettings() {
-        this._settings = Settings.default();
-        return await this._settingsProvider.set(this._settings);
+    getEvents() : ReadonlyArray<DateNightData> {
+        return this._settings.events;
     }
 }
