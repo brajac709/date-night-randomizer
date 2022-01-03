@@ -15,5 +15,8 @@
   "devDependencies": {
     "@types/node": "^8.0.14",
     "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "@octokit/core": "^3.5.1"
   }
 }

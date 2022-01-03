@@ -1,12 +1,12 @@
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
   - init: |-
-      ./.gitpod/setup.sh
-  - init: |-
       echo 'init script'; # runs during prebuild
       npm install;
       npm run build;
-    command: echo 'start script'
+    command: |-
+      echo 'start script'
+      ./.gitpod/setup.sh;
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 #ports:
