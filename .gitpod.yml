@@ -9,6 +9,7 @@ tasks:
     command: |-
       echo 'start script'
       ./.gitpod/setup.sh;
+      cd src/DateNightRandomizerConsole;
   - name: Front End Dev Server
     init: |-
       cd src/DateNightRandomizerWeb;
