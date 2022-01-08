@@ -1,5 +1,14 @@
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
+  - name: Front End Dev Server
+    before: |-
+      npm install -g @angular/cli
+    init: |-
+      cd src/DateNightRandomizerWeb;
+      npm install;
+    command: |-
+      cd src/DateNightRandomizerWeb;
+      ng serve
   - name: App Server
     init: |-
       echo 'init script'; # runs during prebuild
@@ -10,12 +19,6 @@ tasks:
       echo 'start script'
       ./.gitpod/setup.sh;
       cd src/DateNightRandomizerConsole;
-  - name: Front End Dev Server
-    init: |-
-      cd src/DateNightRandomizerWeb;
-      npm install;
-    command: |-
-      ng serve
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
