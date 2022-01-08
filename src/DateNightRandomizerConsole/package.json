@@ -9,10 +9,13 @@
   "scripts": {
     "build": "tsc --build; npm run copy-files",
     "clean": "tsc --build --clean",
-    "copy-files" : "cp App/config.json dist/config.json"
+    "copy-files": "cp App/config.json dist/config.json"
   },
   "devDependencies": {
     "@types/node": "^8.0.14",
     "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "@octokit/core": "^3.5.1"
   }
 }
