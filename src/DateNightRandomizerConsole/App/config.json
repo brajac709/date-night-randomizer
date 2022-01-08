@@ -4,5 +4,6 @@
     "gistId" : "c57eb47db6217d2236a9879b676678b4",
     "remoteSettings" : true,
     "runTests" : false,
+    "appName" : "webApp",
     "debugMode" : true
 }
