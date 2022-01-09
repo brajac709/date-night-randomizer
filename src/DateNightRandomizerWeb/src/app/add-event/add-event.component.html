@@ -1,0 +1,13 @@
+<form #addEvent="ngForm">
+    <label class="block">
+        <span>Name</span>
+        <input type="text" name="name" [(ngModel)]="model.eventName"
+            class="rounded-md mt-1 block w-full">
+    </label>
+    <label class="block">
+        <span>Description</span>
+        <input type="text" name="description" [(ngModel)]="model.eventDescription"
+            class="rounded-md mt-1 block w-full">
+    </label>
+</form>
+
