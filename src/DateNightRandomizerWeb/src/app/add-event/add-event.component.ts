@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { DateNightData } from "../../../../DateNightRandomizerConsole/App/dateNightData";
+import { EventsService } from '../events.service';
 
 @Component({
   selector: 'app-add-event',
@@ -12,10 +13,18 @@ export class AddEventComponent implements OnInit {
     eventName : "Temp Name",
   };
 
+  @Output() submittedEvent = new EventEmitter<boolean>();
 
-  constructor() { }
+
+  constructor(private eventService : EventsService) { }
 
   ngOnInit(): void {
+  }
+
+  onSubmit() {
+    this.eventService.addEvent(this.model).subscribe();
+    console.log("Submitted");
+    this.submittedEvent.emit(true);
   }
 
 }

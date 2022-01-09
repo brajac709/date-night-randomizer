@@ -1,4 +1,4 @@
-<form #addEvent="ngForm">
+<form #addEvent="ngForm" (ngSubmit)="onSubmit()">
     <label class="block">
         <span>Name</span>
         <input type="text" name="name" [(ngModel)]="model.eventName"
@@ -9,5 +9,6 @@
         <input type="text" name="description" [(ngModel)]="model.eventDescription"
             class="rounded-md mt-1 block w-full">
     </label>
+    <button type="submit" class="rounded-md px-2 py-2 bg-blue-500">Submit</button>
 </form>
 

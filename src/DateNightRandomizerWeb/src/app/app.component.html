@@ -346,7 +346,12 @@
       Hello there
     </p>
     <button class="px-2 py-2 mx-2 bg-blue-500 rounded-lg">Touch me!</button>
-    <app-add-event></app-add-event>
+    <!-- todo on submit refetch lists -->
+    <app-add-event (submittedEvent)="onAdd($event)"></app-add-event>
+
+    <!-- TODO REMOVE ME : debugging -->
+    <pre>{{ events | json }}</pre>
+    <pre>{{ popped | json }}</pre>
   </div>
 
 
