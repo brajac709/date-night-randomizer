@@ -34,3 +34,6 @@ github:
     addComment: false
     addBadge: true
 
+vscode:
+  extensions:
+    - bradlc.vscode-tailwindcss
