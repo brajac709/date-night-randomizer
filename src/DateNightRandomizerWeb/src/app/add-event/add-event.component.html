@@ -1,14 +1,26 @@
 <form #addEvent="ngForm" (ngSubmit)="onSubmit()">
+
     <label class="block">
         <span>Name</span>
-        <input type="text" name="name" [(ngModel)]="model.eventName"
-            class="rounded-md mt-1 block w-full">
+        <input type="text" name="name" 
+            [(ngModel)]="model.eventName"
+            required
+            class="input">
     </label>
+
     <label class="block">
         <span>Description</span>
-        <input type="text" name="description" [(ngModel)]="model.eventDescription"
-            class="rounded-md mt-1 block w-full">
+        <input type="text" name="description" 
+            [(ngModel)]="model.eventDescription"
+            class="input">
     </label>
-    <button type="submit" class="rounded-md px-2 py-2 bg-blue-500">Submit</button>
+
+    <button type="submit" 
+        [disabled]="!addEvent.form.valid"
+        class="btn bg-blue-500">Submit</button>
 </form>
+
+<div>
+    Form is {{ addEvent.form.valid ? 'valid' : 'invalid'}}
+</div>
 
