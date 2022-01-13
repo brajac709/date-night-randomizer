@@ -1,0 +1,18 @@
+<div
+  class="h-full w-full"
+>
+  <ul>
+      <li 
+          class="block w-full py-5 border-2 cursor-poiner hover:bg-blue-300"
+          *ngFor="let button of buttons"
+          (click)="onSelect(button)"
+      > 
+          <span class="pl-5">
+            {{button}}
+          </span>
+      </li>
+  </ul>
+
+  
+
+</div>

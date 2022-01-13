@@ -16,6 +16,8 @@ export class AppComponent {
   events : any[] = [];
   popped : any[] = [];
 
+  selected? : string;
+
   constructor(private eventsService : EventsService) {};
 
   ngOnInit() {
@@ -30,5 +32,9 @@ export class AppComponent {
       .subscribe(events => this.events = events);
     this.eventsService.getPoppedEvents()
       .subscribe(events => this.popped = events);
+  }
+
+  onMenuSelect(value : string) {
+    this.selected = value;
   }
 }
