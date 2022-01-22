@@ -1,5 +1,5 @@
 
-<div class="grid grid-cols-6">
+<div class="grid grid-cols-6 h-screen">
   <!-- Toolbar -->
   <div class="col-span-6 h-px-60 flex items-center bg-[#1976d2] text-white font-[600]" role="banner">
   <!--
@@ -15,16 +15,16 @@
   </div>
   <!-- Menu Sidebar -->
   <div 
-    class="col-span-1 h-full border-2"
+    class="col-span-1 h-screen border-2 border-collapse"
   >
     <app-menu-bar 
-      [buttons]="['test', 'hello']"
-      (selected)="selected=$event"
+      [buttons]="buttons"
+      (selected)="onMenuSelect($event)"
     ></app-menu-bar>
   </div>
 
   <!-- Main Content Area -->
-  <div class="col-span-5">
+  <div class="col-span-4">
     <div role="main"
       class="flex mt-[82px] mx-auto mb-[32px] px-0 py-[16px] max-w-[960px] flex-col items-center" 
     >
@@ -42,19 +42,31 @@
       -->
       <div [ngSwitch]="selected">
         <!-- TODO add the data to this-->
+        <!-- figure out a way to inject template from controller -->
         <app-event-view *ngSwitchCase="'test'"
             [event]="events[events.length-1]"
         ></app-event-view>
-        <div *ngSwitchCase="'hello'">
+        <div *ngSwitchCase="'addEvent'">
           <app-add-event (submittedEvent)="onAdd($event)"></app-add-event>
 
           <!-- TODO REMOVE ME : debugging -->
           <pre>{{ events | json }}</pre>
           <pre>{{ popped | json }}</pre>
         </div>
+        <div *ngSwitchCase="'removePoppedEvent'">
+          TODO I need to be implemented
+          <pre>{{ popped | json }}</pre>
+        </div>
         <p *ngSwitchDefault>I'm a default</p>
       </div>
     </div>
+  </div>
+
+
+  <!-- Popped Events view-->
+  <!-- TOOD maybe have this rotate through the list randomly -->
+  <div class="col-span-1 h-screen border-2 border-collapse">
+    <app-event-view [event]="popped[popped.length-1]"></app-event-view>
   </div>
 </div>
 
