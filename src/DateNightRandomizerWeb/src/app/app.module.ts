@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { AddEventComponent } from './add-event/add-event.component';
 import { MenuBarComponent } from './menu-bar/menu-bar.component';
 import { EventViewComponent } from './event-view/event-view.component';
+import { RemoveEventComponent } from './remove-event/remove-event.component';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { EventViewComponent } from './event-view/event-view.component';
     AddEventComponent,
     MenuBarComponent,
     EventViewComponent,
+    RemoveEventComponent,
   ],
   imports: [
     BrowserModule,

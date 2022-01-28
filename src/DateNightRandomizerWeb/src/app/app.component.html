@@ -44,7 +44,7 @@
         <!-- TODO add the data to this-->
         <!-- figure out a way to inject template from controller -->
         <app-event-view *ngSwitchCase="'test'"
-            [event]="events[events.length-1]"
+          [event]="events[events.length-1]"
         ></app-event-view>
         <div *ngSwitchCase="'addEvent'">
           <app-add-event (submittedEvent)="onAdd($event)"></app-add-event>
@@ -54,8 +54,10 @@
           <pre>{{ popped | json }}</pre>
         </div>
         <div *ngSwitchCase="'removePoppedEvent'">
-          TODO I need to be implemented
-          <pre>{{ popped | json }}</pre>
+          <app-remove-event 
+            [events]="popped"
+            (remove)="onRemovePopped($event)"
+          ></app-remove-event>
         </div>
         <p *ngSwitchDefault>I'm a default</p>
       </div>

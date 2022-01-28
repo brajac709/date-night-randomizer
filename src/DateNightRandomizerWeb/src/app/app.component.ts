@@ -42,6 +42,7 @@ export class AppComponent {
     this.updateEvents();
   }
 
+
   onMenuSelect(value : string) {
     this.selected = value;
 
@@ -60,6 +61,13 @@ export class AppComponent {
         this.updateEvents();
         break;
     }
+  }
+
+  onRemovePopped(idx: number) {
+    alert("removing pop");
+    this.eventsService.removePoppedEvent(idx)
+      .subscribe();
+    this.updateEvents();
   }
 
   private updateEvents()  {
