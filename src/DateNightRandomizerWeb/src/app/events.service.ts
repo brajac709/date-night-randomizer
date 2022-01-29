@@ -49,6 +49,7 @@ export class EventsService {
   }
 
   removePoppedEvent(idx : number) : Observable<void> {
+    // TODO may want to keep a global list of all events for historical purposes.
     this.mockPoppedEvents.splice(idx,1);
     return of();
   }
