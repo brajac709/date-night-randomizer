@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges} from '@angular/core';
 
+
+
 @Component({
   selector: 'app-jar-image',
   templateUrl: './jar-image.component.html',
@@ -10,6 +12,13 @@ export class JarImageComponent implements OnInit, OnChanges {
   @Input() count : number = 0;
 
   positions : ContentsPosition[] = []
+  height = 100;
+  width = 100;
+  radius = 10;
+  private _maxAccross = Math.trunc(this.width/this.radius/2);
+  private _maxDown = Math.trunc(this.height/this.radius/2);
+
+  
 
   constructor() { }
 
@@ -24,14 +33,13 @@ export class JarImageComponent implements OnInit, OnChanges {
 
   private generatePositions() {
     const count = this.count;
-    const radius = 10;
     const newPositions : ContentsPosition[] = [];
     for (var i = 0; i < count; ++i)
     {
       newPositions.push({
-        x: radius*(i + .5)*2.1,
-        y: radius,
-        radius: radius,
+        x: this.radius*((i % this._maxAccross) + .5)*2,
+        y: this.height - this.radius*(Math.trunc(i/this._maxAccross)+.5)*2,
+        radius: this.radius,
       });
     }
     this.positions = newPositions;
