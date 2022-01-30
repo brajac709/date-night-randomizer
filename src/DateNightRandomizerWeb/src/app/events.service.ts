@@ -1,13 +1,28 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { catchError, retry } from 'rxjs/operators';
 import { DateNightData } from "../../../DateNightRandomizerConsole/App/dateNightData";
+import { environment } from '../environments/environment';
 
 
+const apiUrl = new URL(environment.apiUrl);
+const eventUrl = new URL('/event', apiUrl).toString();
+const recycleUrl = new URL('/events/recycle', apiUrl).toString();
+const eventsUrl = new URL('/events', apiUrl).toString();
+const poppedUrl = new URL('/events/popped', apiUrl).toString();
+const countUrl = new URL('/events/count', apiUrl).toString();
+const initializeUrl = new URL('/initiaize', apiUrl).toString();
+const addId = (id : number, base? : string | URL) => {
+  if (!Number.isInteger(id)) throw "id must be an integer";
+  return new URL(id.toString(), base).toString();
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class EventsService {
+
 
   private mockEvents : DateNightData[] = [
     {
@@ -18,44 +33,37 @@ export class EventsService {
 
   private mockPoppedEvents : DateNightData[] = [];
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
 
   getPoppedEvents() : Observable<DateNightData[]> {
-    return of(this.mockPoppedEvents);
+    return this.http.get<DateNightData[]>(poppedUrl);
   }
 
   addEvent(newEvent : DateNightData) : Observable<void> {
-    this.mockEvents.push(newEvent);
-    return of();
+    return this.http.post<void>(eventUrl, newEvent);
   }
 
   popEvent() : Observable<DateNightData | undefined> {
-    const event = this.mockEvents.pop();
-    if (event !== undefined) {
-      this.mockPoppedEvents.push(event);
-    }
-    return of(event);
+    return this.http.get<DateNightData | undefined>(eventUrl);
   }
 
   recyclePoppedEvents() : Observable<void> {
-    this.mockEvents.push(...this.mockPoppedEvents);
-    this.mockPoppedEvents.splice(0,this.mockPoppedEvents.length);
-    return of();
+    return this.http.post<void>(recycleUrl, {});
   }
 
   numberOfEvents() : Observable<number> {
-    return of(this.mockEvents.length);
+    return this.http.get<number>(countUrl);
   }
 
   removePoppedEvent(idx : number) : Observable<void> {
     // TODO may want to keep a global list of all events for historical purposes.
-    this.mockPoppedEvents.splice(idx,1);
-    return of();
+    const url = addId(idx, poppedUrl);
+    return this.http.delete<void>(url);
   }
 
   /* TODO restrict the following to debug mode */
   getEvents() : Observable<DateNightData[]> {
-    return of(this.mockEvents);
+    return this.http.get<DateNightData[]>(eventsUrl);
   }
 }

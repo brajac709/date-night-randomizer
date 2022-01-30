@@ -48,6 +48,8 @@ export class WebApp {
             res.sendStatus(200).send("OK");
         });
 
+        // TODO GET should not have side effects... 
+        // Is there another verb i could use for this?
         app.get('/event', async (req, res) => {
             console.log("Popping Event...");
             const event = await this._randomizerApp.popEvent(); 
