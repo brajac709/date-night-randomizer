@@ -64,6 +64,8 @@ export class EventsService {
 
   /* TODO restrict the following to debug mode */
   getEvents() : Observable<DateNightData[]> {
-    return this.http.get<DateNightData[]>(eventsUrl);
+    return this.http.get<DateNightData[]>(eventsUrl, {
+      withCredentials: true
+    });
   }
 }
