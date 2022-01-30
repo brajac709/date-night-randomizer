@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { EventsService } from './events.service';
 import { DateNightData } from '../../../DateNightRandomizerConsole/App/dateNightData';
 import { environment } from '../environments/environment';
+import { SpinnerService } from './spinner.service';
 
 
 
@@ -21,9 +22,22 @@ export class AppComponent {
 
   buttons : string[] = [];
 
-  constructor(private eventsService : EventsService) { };
+  showSpinner = false;
+
+  constructor(
+    private eventsService : EventsService,
+    private spinnerService : SpinnerService
+    ) { };
 
   ngOnInit() {
+    this.spinnerService.subscribe((show) => {
+      this.showSpinner = show
+    });
+
+    this.spinnerService.showSpinner(this.showSpinner);
+
+
+
     this.updateEvents();
 
     // TODO get from settings or something
@@ -40,7 +54,6 @@ export class AppComponent {
     if (environment.debugMode) {
       this.buttons.push(...["reinitialize"]);
     }
-
   }
 
   onAdd(success : boolean) {

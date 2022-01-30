@@ -11,6 +11,8 @@ import { EventViewComponent } from './event-view/event-view.component';
 import { RemoveEventComponent } from './remove-event/remove-event.component';
 
 import { LoggingInterceptor } from './interceptors/logging-interceptor';
+import { SpinnerInterceptor } from './interceptors/spinner-interceptor';
+import { HeartLoaderComponent } from './heart-loader/heart-loader.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +21,7 @@ import { LoggingInterceptor } from './interceptors/logging-interceptor';
     MenuBarComponent,
     EventViewComponent,
     RemoveEventComponent,
+    HeartLoaderComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,7 +30,8 @@ import { LoggingInterceptor } from './interceptors/logging-interceptor';
     HttpClientModule,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: LoggingInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: LoggingInterceptor, multi: true },
   ],
   bootstrap: [AppComponent]
 })
