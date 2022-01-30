@@ -22,9 +22,11 @@ export class AddEventComponent implements OnInit {
   }
 
   onSubmit() {
-    this.eventService.addEvent({ ...this.model }).subscribe();
+    this.eventService.addEvent({ ...this.model })
+      .subscribe(() => {
+        this.submittedEvent.emit(true);
+      });
     console.log("Submitted");
-    this.submittedEvent.emit(true);
   }
 
 }

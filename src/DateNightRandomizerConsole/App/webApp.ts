@@ -120,13 +120,15 @@ export class WebApp {
             res.status(200).json(num);
         });
 
-        app.delete('/api/events/popped/:id(\d+)', async (req, res) => {
+        app.delete('/api/events/popped/:id([0-9]+)', async (req, res) => {
+            console.log(`removing popped`)
             const idx = parseInt(req.params.id);
+            console.log(`${idx}`)
             await this._randomizerApp.removePoppedEvent(idx);
             res.status(200).send("OK");
         });
 
-        app.delete('/api/events/:id(\d+)', async (req, res) => {
+        app.delete('/api/events/:id([0-9]+)', async (req, res) => {
             if (!debugMode) {
                 // TODO maybe use error middleware??
                 res.status(403).send("Forbidden");

@@ -1,4 +1,7 @@
-<ul>
+<div *ngIf="events.length == 0">
+  No Popped Events
+</div>
+<ul *ngIf="events.length > 0">
     <!-- TODO Fix the spacing,  grid really isn't meant for this...
             maybe actually learn flexbox? or set inline styles
     -->

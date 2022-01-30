@@ -56,20 +56,23 @@ export class AppComponent {
       case 'popEvent':
         alert("popping");
         this.eventsService.popEvent()
-          .subscribe();
-        this.updateEvents();
+          .subscribe(() => {
+            this.updateEvents();
+          });
         break;
       case 'recyclePoppedEvents':
         alert("recycling");
         this.eventsService.recyclePoppedEvents()
-          .subscribe();
-        this.updateEvents();
+          .subscribe(() => {
+            this.updateEvents();
+          });
         break;
       case 'reinitialize':
         alert('re-initializing');
         this.eventsService.reinitialize()
-          .subscribe();
-        this.updateEvents();
+          .subscribe(() => {
+            this.updateEvents();
+          });
         break;
     }
   }
@@ -77,8 +80,9 @@ export class AppComponent {
   onRemovePopped(idx: number) {
     alert("removing pop");
     this.eventsService.removePoppedEvent(idx)
-      .subscribe();
-    this.updateEvents();
+      .subscribe(() => {
+        this.updateEvents();
+      });
   }
 
   private updateEvents()  {
