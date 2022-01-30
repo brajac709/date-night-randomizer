@@ -37,6 +37,14 @@ export class WebApp {
 
         const debugMode = configManager.get("debugMode");
 
+        // Enable CORS
+        app.use((req,res,next) => {
+            // TODO make the angular app url injectable
+            res.header("Access-Control-Allow-Origin", "http://localhost:4200");
+            res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+            next();
+        })
+
         app.get('/', (req,res) => {
             res.send('Hello World!!!')
         });
