@@ -10,12 +10,15 @@ export class MenuBarComponent implements OnInit {
   @Input() buttons : string[] = [];
   @Output() selected = new EventEmitter<string>()
 
+  selectedButton : string | undefined;
+
   constructor() { }
 
   ngOnInit(): void {
   }
 
   onSelect(selected : string) {
+    this.selectedButton = selected;
     this.selected.emit(selected);
   }
 

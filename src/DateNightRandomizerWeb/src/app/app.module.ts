@@ -14,6 +14,7 @@ import { LoggingInterceptor } from './interceptors/logging-interceptor';
 import { SpinnerInterceptor } from './interceptors/spinner-interceptor';
 import { HeartLoaderComponent } from './heart-loader/heart-loader.component';
 import { JarImageComponent } from './jar-image/jar-image.component';
+import { ButtonBarComponent } from './button-bar/button-bar.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { JarImageComponent } from './jar-image/jar-image.component';
     RemoveEventComponent,
     HeartLoaderComponent,
     JarImageComponent,
+    ButtonBarComponent,
   ],
   imports: [
     BrowserModule,

@@ -21,6 +21,7 @@ export class AppComponent {
   selected? : string;
 
   buttons : string[] = [];
+  actionButtons : string[] = [];
 
   showSpinner = false;
 
@@ -45,14 +46,17 @@ export class AppComponent {
     this.buttons = [
       "test",  // shows last added event. remove this entry
       "addEvent", 
-      "popEvent", 
-      "recyclePoppedEvents", 
       "removePoppedEvent",
     ];
 
+    this.actionButtons = [
+      "popEvent", 
+      "recyclePoppedEvents", 
+    ]
+
     // TODO add debug mode options for removing events and whatnot
     if (environment.debugMode) {
-      this.buttons.push(...["reinitialize"]);
+      this.actionButtons.push(...["reinitialize"]);
     }
   }
 
@@ -63,25 +67,27 @@ export class AppComponent {
 
   onMenuSelect(value : string) {
     this.selected = value;
+  }
 
+  onAction(value : string) {
     // Add some basic function handling for now
     switch(value) {
       case 'popEvent':
-        alert("popping");
+        //alert("popping");
         this.eventsService.popEvent()
           .subscribe(() => {
             this.updateEvents();
           });
         break;
       case 'recyclePoppedEvents':
-        alert("recycling");
+        //alert("recycling");
         this.eventsService.recyclePoppedEvents()
           .subscribe(() => {
             this.updateEvents();
           });
         break;
       case 'reinitialize':
-        alert('re-initializing');
+        //alert('re-initializing');
         this.eventsService.reinitialize()
           .subscribe(() => {
             this.updateEvents();

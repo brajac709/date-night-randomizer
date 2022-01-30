@@ -4,6 +4,7 @@
   <ul>
       <li 
           class="block w-full py-5 border-2 cursor-poiner hover:bg-blue-300"
+          [class.bg-blue-400]="selectedButton === button"
           *ngFor="let button of buttons"
           (click)="onSelect(button)"
       > 
