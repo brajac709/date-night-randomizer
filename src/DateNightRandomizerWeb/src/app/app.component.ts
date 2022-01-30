@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EventsService } from './events.service';
 import { DateNightData } from '../../../DateNightRandomizerConsole/App/dateNightData';
+import { environment } from '../environments/environment';
 
 
 
@@ -32,9 +33,13 @@ export class AppComponent {
       "addEvent", 
       "popEvent", 
       "recyclePoppedEvents", 
-      "removePoppedEvent"
+      "removePoppedEvent",
     ];
+
     // TODO add debug mode options for removing events and whatnot
+    if (environment.debugMode) {
+      this.buttons.push(...["reinitialize"]);
+    }
 
   }
 
@@ -57,6 +62,12 @@ export class AppComponent {
       case 'recyclePoppedEvents':
         alert("recycling");
         this.eventsService.recyclePoppedEvents()
+          .subscribe();
+        this.updateEvents();
+        break;
+      case 'reinitialize':
+        alert('re-initializing');
+        this.eventsService.reinitialize()
           .subscribe();
         this.updateEvents();
         break;

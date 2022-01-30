@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
-import { catchError, retry } from 'rxjs/operators';
+import { catchError, retry, map } from 'rxjs/operators';
 import { DateNightData } from "../../../DateNightRandomizerConsole/App/dateNightData";
 import { environment } from '../environments/environment';
 
@@ -54,8 +54,11 @@ export class EventsService {
     return this.http.get<DateNightData[]>(poppedUrl);
   }
 
+  // TODO may want to define a generic Response type
   addEvent(newEvent : DateNightData) : Observable<void> {
-    return this.http.post<void>(eventUrl, newEvent);
+    return this.http.post(eventUrl, newEvent, {
+      responseType: 'text'
+    }).pipe(map((x) => {}));
   }
 
   popEvent() : Observable<DateNightData | undefined> {
@@ -63,7 +66,9 @@ export class EventsService {
   }
 
   recyclePoppedEvents() : Observable<void> {
-    return this.http.post<void>(recycleUrl, {});
+    return this.http.post(recycleUrl, {}, {
+      responseType: 'text'
+    }).pipe(map((x) => {}));
   }
 
   numberOfEvents() : Observable<number> {
@@ -73,7 +78,9 @@ export class EventsService {
   removePoppedEvent(idx : number) : Observable<void> {
     // TODO may want to keep a global list of all events for historical purposes.
     const url = addId(idx, poppedUrl);
-    return this.http.delete<void>(url);
+    return this.http.delete(url, {
+      responseType: 'text'
+    }).pipe(map((x) => {}));
   }
 
   /* TODO restrict the following to debug mode */
@@ -81,5 +88,11 @@ export class EventsService {
     return this.http.get<DateNightData[]>(eventsUrl, {
       withCredentials: true
     });
+  }
+
+  reinitialize() : Observable<void> {
+    return this.http.post(initializeUrl, {}, {
+      responseType: 'text'
+    }).pipe(map((x) => {}));
   }
 }
