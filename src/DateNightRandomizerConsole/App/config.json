@@ -5,5 +5,7 @@
     "remoteSettings" : true,
     "runTests" : false,
     "appName" : "webApp",
-    "debugMode" : true
+    "debugMode" : true,
+    "setGitpodCORS": true ,
+    "setAngularEnvironment": true
 }

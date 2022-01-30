@@ -6,6 +6,8 @@ import { DateNightData } from "../../../DateNightRandomizerConsole/App/dateNight
 import { environment } from '../environments/environment';
 
 
+
+/*
 const apiUrl = new URL(environment.apiUrl);
 const eventUrl = new URL('/event', apiUrl).toString();
 const recycleUrl = new URL('/events/recycle', apiUrl).toString();
@@ -16,6 +18,18 @@ const initializeUrl = new URL('/initiaize', apiUrl).toString();
 const addId = (id : number, base? : string | URL) => {
   if (!Number.isInteger(id)) throw "id must be an integer";
   return new URL(id.toString(), base).toString();
+}
+*/
+const apiUrl = '/api';
+const eventUrl = `${apiUrl}/event`;
+const recycleUrl = `${apiUrl}/events/recycle`;
+const eventsUrl = `${apiUrl}/events`;
+const poppedUrl = `${apiUrl}/events/popped`;
+const countUrl = `${apiUrl}/events/count`;
+const initializeUrl = `${apiUrl}/initialize`;
+const addId = (id : number, base? : string | URL) => {
+  if (!Number.isInteger(id)) throw "id must be an integer";
+  return `${base}/${id}`;
 }
 
 @Injectable({
