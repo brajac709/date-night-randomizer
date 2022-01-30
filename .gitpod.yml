@@ -8,7 +8,7 @@ tasks:
       npm install;
     command: |-
       cd src/DateNightRandomizerWeb;
-      ng serve
+      ng serve --public-host "$(gp url 4200 | sed 's+http://++')"
   - name: App Server
     init: |-
       echo 'init script'; # runs during prebuild
@@ -24,6 +24,8 @@ tasks:
 ports:
   - port: 4200
     onOpen: open-browser
+  - port: 3000
+    onOpen: ignore
 
 github:
   prebuilds:
