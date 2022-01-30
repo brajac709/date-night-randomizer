@@ -13,6 +13,7 @@ import { RemoveEventComponent } from './remove-event/remove-event.component';
 import { LoggingInterceptor } from './interceptors/logging-interceptor';
 import { SpinnerInterceptor } from './interceptors/spinner-interceptor';
 import { HeartLoaderComponent } from './heart-loader/heart-loader.component';
+import { JarImageComponent } from './jar-image/jar-image.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { HeartLoaderComponent } from './heart-loader/heart-loader.component';
     EventViewComponent,
     RemoveEventComponent,
     HeartLoaderComponent,
+    JarImageComponent,
   ],
   imports: [
     BrowserModule,

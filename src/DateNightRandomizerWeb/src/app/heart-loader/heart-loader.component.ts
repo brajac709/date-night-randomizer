@@ -17,9 +17,11 @@ const heartThrobAnimation = [
   selector: 'app-heart-loader',
   templateUrl: './heart-loader.component.html',
   styleUrls: ['./heart-loader.component.scss'],
+  /*
   animations: [
     heartThrobAnimation,
   ]
+  */
 })
 export class HeartLoaderComponent implements OnInit {
 
