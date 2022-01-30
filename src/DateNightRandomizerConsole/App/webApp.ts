@@ -53,7 +53,7 @@ export class WebApp {
             console.log("Adding Event");
             const event = req.body;
             await this._randomizerApp.addEvent(event)
-            res.sendStatus(200).send("OK");
+            res.status(200).send("OK");
         });
 
         // TODO GET should not have side effects... 
@@ -63,14 +63,14 @@ export class WebApp {
             const event = await this._randomizerApp.popEvent(); 
 
             console.log(event);
-            res.sendStatus(200).json(event);
+            res.status(200).json(event);
         });
 
         // TODO should this be off the popped endpoint?
         app.post('/events/recycle', async (req, res) => {
             console.log("Recycling events...");
             await this._randomizerApp.recyclePoppedEvents();
-            res.sendStatus(200).send("OK");
+            res.status(200).send("OK");
         });
 
         // TODO may make this a query parameter
@@ -82,13 +82,13 @@ export class WebApp {
             console.log("Popped Events: ");
             console.log(JSON.stringify(events,null, 2));
 
-            res.sendStatus(200).json(events);
+            res.status(200).json(events);
         });
 
         app.get('/events', async (req, res) => {
             if (!debugMode) {
                 // TODO maybe use error middleware??
-                res.sendStatus(403).send("Forbidden");
+                res.status(403).send("Forbidden");
                 return
             }
             var events = this._randomizerApp.getEvents();
@@ -96,43 +96,43 @@ export class WebApp {
             console.log("Events: ");
             console.log(JSON.stringify(events,null, 2));
 
-            res.sendStatus(200).json(events);
+            res.status(200).json(events);
         });
 
         app.get('/events/count', async (req, res) => {
             var num = this._randomizerApp.numberOfEvents();
             console.log(`Number of Events Remaining: ${num}`);
 
-            res.sendStatus(200).json(num);
+            res.status(200).json(num);
         });
 
         app.delete('/events/popped/:id(\d+)', async (req, res) => {
             const idx = parseInt(req.params.id);
             await this._randomizerApp.removePoppedEvent(idx);
-            res.sendStatus(200).send("OK");
+            res.status(200).send("OK");
         });
 
         app.delete('/events/:id(\d+)', async (req, res) => {
             if (!debugMode) {
                 // TODO maybe use error middleware??
-                res.sendStatus(403).send("Forbidden");
+                res.status(403).send("Forbidden");
                 return
             }
             const idx = parseInt(req.params.id);
             await this._randomizerApp.removeEvent(idx);
-            res.sendStatus(200).send("OK");
+            res.status(200).send("OK");
         });
 
         app.post('/initialize', async (req, res) => {
             if (!debugMode) {
                 // TODO maybe use error middleware??
-                res.sendStatus(403).send("Forbidden");
+                res.status(403).send("Forbidden");
                 return
             }
             await this._randomizerApp.reinitializeSettings();
 
             console.log("Settings Reset");
-            res.sendStatus(200).send("OK");
+            res.status(200).send("OK");
         });
 
         app.listen(port, () => {
