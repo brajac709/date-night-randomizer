@@ -18,7 +18,7 @@ export class JarImageComponent implements OnInit, OnChanges {
 
 
   height = 200;
-  width = 200;
+  width = 300;
   radius = 10;
   private _maxAcross = this.useHeart 
     ? 3

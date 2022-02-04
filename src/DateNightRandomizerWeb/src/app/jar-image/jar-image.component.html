@@ -4,9 +4,9 @@
     [style.width]="width"
 >
     <g transform="translate(100,50)">
-
         <rect *ngIf="!useHeart" class="stroke-red-600" x="0" y="0" [attr.width]="width" [attr.height]="height" />
         <path id="heart-icon" *ngIf="useHeart" transform="scale(3)"
+            style="filter: drop-shadow(3px 3px 3px rgb(236, 38, 38))"
             d="m0,0
                c10,-27 60,0 0,40
                c-60,-40 -10,-67 0,-40
