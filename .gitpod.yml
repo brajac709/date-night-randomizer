@@ -17,8 +17,12 @@ tasks:
       npm run build;
     command: |-
       echo 'start script'
-      ./.gitpod/setup.sh;
       cd src/DateNightRandomizerConsole;
+      npm run start
+  - name: Terminal
+    command: |-
+      ./.gitpod/setup.sh;
+      cd src/
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
