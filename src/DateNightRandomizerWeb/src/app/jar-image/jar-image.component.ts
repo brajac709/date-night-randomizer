@@ -74,10 +74,18 @@ export class JarImageComponent implements OnInit, OnChanges {
     // TODO this needs a lot of work, but it kind of does the job for now
     // 1 , 3-3-3, 5-5-5-5-5
     // 0   1 2 3  4 5 6 7 8
-    this._maxAcross += idx >= this._maxAcross*2-1 ? 2 : 0;
-    const row = (this._maxAcross-1)/2
+
+    // TODO max we can fit with this method is 5 rows
+    // And up to 34 events (2 less than max for 5 rows).
+    // Could do some extra stuff to fill in the top of heart
+    // or jut cap it at 34
+    const row = Math.floor(Math.sqrt(idx));
+    const rowwidth = 2*(row+1) -1;
+    const rowstart = row*row;
+    const rowidx = idx-rowstart;
+    const xoffset = Math.ceil(rowidx/2)*(rowidx % 2 > 0 ? -1 : 1);
     return  {
-        x: this.radius*(idx == (this._maxAcross-1)*2 ? 0 : idx % 2 > 0 ? -1 : 1)*2,
+        x: this.radius*(xoffset)*2,
         // current max is 5 or 6 high
         y: 40*3-this.radius*1.4-this.radius*(row)*2,
         radius: this.radius,
