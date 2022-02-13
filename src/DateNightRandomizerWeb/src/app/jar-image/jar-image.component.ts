@@ -79,10 +79,11 @@ export class JarImageComponent implements OnInit, OnChanges {
     // And up to 34 events (2 less than max for 5 rows).
     // Could do some extra stuff to fill in the top of heart
     // or jut cap it at 34
-    const row = Math.floor(Math.sqrt(idx));
+    const maxidx = 23;
+    const row = idx >= maxidx ? 0 : Math.floor(Math.sqrt(idx));
     const rowwidth = 2*(row+1) -1;
     const rowstart = row*row;
-    const rowidx = idx-rowstart;
+    const rowidx = idx >= maxidx ? 0 : idx - rowstart;
     const xoffset = Math.ceil(rowidx/2)*(rowidx % 2 > 0 ? -1 : 1);
     return  {
         x: this.radius*(xoffset)*2,
