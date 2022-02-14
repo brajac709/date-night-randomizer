@@ -47,6 +47,9 @@ export class EventsService {
 
   private mockPoppedEvents : DateNightData[] = [];
 
+
+  private  deleteInProgress = false;
+
   constructor(private http: HttpClient) { }
 
 
@@ -95,4 +98,21 @@ export class EventsService {
       responseType: 'text'
     }).pipe(map((x) => {}));
   }
+
+  removeEvent(idx : number) : Observable<void> {
+    // TODO may want to keep a global list of all events for historical purposes.
+    if (this.deleteInProgress) {
+      alert("Delete already in progress")
+      return of();
+    }
+    this.deleteInProgress = true;
+    const url = addId(idx, eventsUrl);
+    return this.http.delete(url, {
+      responseType: 'text'
+    })
+    .pipe(map(((x : string) =>  { this.deleteInProgress = false }).bind(this)))
+    .pipe(map((x) => { }));
+  }
+
+
 }

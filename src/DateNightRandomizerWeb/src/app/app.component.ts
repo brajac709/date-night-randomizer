@@ -56,6 +56,7 @@ export class AppComponent {
 
     // TODO add debug mode options for removing events and whatnot
     if (environment.debugMode) {
+      this.buttons.push(...["removeEvent"]);
       this.actionButtons.push(...["reinitialize"]);
     }
   }
@@ -99,6 +100,13 @@ export class AppComponent {
   onRemovePopped(idx: number) {
     alert("removing pop");
     this.eventsService.removePoppedEvent(idx)
+      .subscribe(() => {
+        this.updateEvents();
+      });
+  }
+
+  onRemoveEvent(idx:  number) {
+    this.eventsService.removeEvent(idx)
       .subscribe(() => {
         this.updateEvents();
       });

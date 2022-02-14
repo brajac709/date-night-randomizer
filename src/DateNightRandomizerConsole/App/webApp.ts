@@ -129,7 +129,9 @@ export class WebApp {
         });
 
         app.delete('/api/events/:id([0-9]+)', async (req, res) => {
+            console.log("removing event")
             if (!debugMode) {
+                console.log("forbidden");
                 // TODO maybe use error middleware??
                 res.status(403).send("Forbidden");
                 return

@@ -70,6 +70,12 @@
             (remove)="onRemovePopped($event)"
           ></app-remove-event>
         </div>
+        <div *ngSwitchCase="'removeEvent'">
+          <app-remove-event 
+            [events]="events"
+            (remove)="onRemoveEvent($event)"
+          ></app-remove-event>
+        </div>
         <p *ngSwitchDefault>I'm a default</p>
       </div>
     </div>
