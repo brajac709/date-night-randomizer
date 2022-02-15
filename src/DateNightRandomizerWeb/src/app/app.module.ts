@@ -15,6 +15,7 @@ import { SpinnerInterceptor } from './interceptors/spinner-interceptor';
 import { HeartLoaderComponent } from './heart-loader/heart-loader.component';
 import { JarImageComponent } from './jar-image/jar-image.component';
 import { ButtonBarComponent } from './button-bar/button-bar.component';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { ButtonBarComponent } from './button-bar/button-bar.component';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    AppRoutingModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: SpinnerInterceptor, multi: true },
