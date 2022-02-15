@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MenuItem } from '../contracts/menu-item';
 
 @Component({
   selector: 'app-button-bar',
@@ -7,15 +8,15 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class ButtonBarComponent implements OnInit {
 
-  @Input() buttons : any[] = [];
-  @Output() event = new EventEmitter<any>();
+  @Input() buttons : MenuItem[] = [];
+  @Output() event = new EventEmitter<MenuItem>();
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  onClick(button : any) {
+  onClick(button : MenuItem) {
     this.event.emit(button);
   }
 

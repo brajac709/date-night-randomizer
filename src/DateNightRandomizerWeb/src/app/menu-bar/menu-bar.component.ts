@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MenuItem } from '../contracts/menu-item';
 
 @Component({
   selector: 'app-menu-bar',
@@ -7,19 +8,20 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class MenuBarComponent implements OnInit {
 
-  @Input() buttons : string[] = [];
-  @Output() selected = new EventEmitter<string>()
+  @Input() buttons : MenuItem[] = [];
+  @Output() selected = new EventEmitter<MenuItem>()
 
-  selectedButton : string | undefined;
+  selectedButton : MenuItem | undefined;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  onSelect(selected : string) {
+  onSelect(selected : MenuItem) {
     this.selectedButton = selected;
     this.selected.emit(selected);
+    selected.click && selected.click(selected);
   }
 
 }
