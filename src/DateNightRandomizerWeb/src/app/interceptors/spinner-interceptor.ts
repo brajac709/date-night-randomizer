@@ -3,7 +3,7 @@ import { HttpInterceptor, HttpRequest, HttpResponse, HttpHandler, HttpErrorRespo
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, finalize, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { SpinnerService } from '../spinner.service';
+import { SpinnerService } from '../services/spinner.service';
 
 @Injectable()
 export class SpinnerInterceptor implements HttpInterceptor {

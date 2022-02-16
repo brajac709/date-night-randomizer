@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { EventsService } from './events.service';
+import { EventsService } from './services/events.service';
 import { DateNightData } from '../../../DateNightRandomizerConsole/App/dateNightData';
 import { environment } from '../environments/environment';
-import { SpinnerService } from './spinner.service';
+import { SpinnerService } from './services/spinner.service';
 import { MenuItem } from './contracts/menu-item';
 
 

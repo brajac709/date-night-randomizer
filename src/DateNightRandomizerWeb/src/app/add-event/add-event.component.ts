@@ -1,6 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { DateNightData } from "../../../../DateNightRandomizerConsole/App/dateNightData";
-import { EventsService } from '../events.service';
+import { EventsService } from '../services/events.service';
 
 @Component({
   selector: 'app-add-event',
