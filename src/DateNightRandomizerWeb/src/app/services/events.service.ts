@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, retry, map } from 'rxjs/operators';
@@ -37,15 +37,10 @@ const addId = (id : number, base? : string | URL) => {
 })
 export class EventsService {
 
+  eventsEmitter = new EventEmitter<DateNightData[]>();  
+  poppedEventsEmitter = new EventEmitter<DateNightData[]>();  
 
-  private mockEvents : DateNightData[] = [
-    {
-      eventName : "Test Event",
-      eventDescription : "Test Description"
-    }
-  ];
 
-  private mockPoppedEvents : DateNightData[] = [];
 
 
   private  deleteInProgress = false;
@@ -54,7 +49,11 @@ export class EventsService {
 
 
   getPoppedEvents() : Observable<DateNightData[]> {
-    return this.http.get<DateNightData[]>(poppedUrl);
+    return this.http.get<DateNightData[]>(poppedUrl)
+      .pipe(map((x) => {
+        this.poppedEventsEmitter.emit(x);
+        return x;
+      }));
   }
 
   // TODO may want to define a generic Response type
@@ -90,7 +89,10 @@ export class EventsService {
   getEvents() : Observable<DateNightData[]> {
     return this.http.get<DateNightData[]>(eventsUrl, {
       withCredentials: true
-    });
+    }).pipe(map((x) => {
+      this.eventsEmitter.emit(x);
+      return x;
+    }));
   }
 
   reinitialize() : Observable<void> {

@@ -40,6 +40,15 @@ export class AppComponent {
 
     this.updateEvents();
 
+    // SETUP Subscripion  (todo may need to unsubscribe)
+    this.eventsService.eventsEmitter.subscribe(events => {
+      this.events = events;
+    })
+    
+    this.eventsService.poppedEventsEmitter.subscribe(events => {
+      this.popped = events;
+    })
+
     // TODO get from settings or something
     // TODO figure out how to assign templates to this as well.
     this.buttons = [
