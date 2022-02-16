@@ -3,14 +3,22 @@ import { RouterModule, Routes } from '@angular/router';
 import { AddEventComponent } from './add-event/add-event.component';
 import { EventViewComponent } from './event-view/event-view.component';
 import { RemoveEventComponent } from './remove-event/remove-event.component';
+import { EventResolverService } from './services/event-resolver.service';
 
 const appRoutes : Routes  = [
   { path: 'test', component: EventViewComponent },
   // TODO make child paths
   { path: 'event/add', component: AddEventComponent },
-  { path: 'event/popped/remove', component: RemoveEventComponent },
-  { path: 'event/remove', component: RemoveEventComponent },
-
+  { 
+    path: 'event/popped/remove', 
+    component: RemoveEventComponent, 
+    resolve : { events : EventResolverService },
+  },
+  { 
+    path: 'event/remove',
+    component: RemoveEventComponent,
+    resolve: { events: EventResolverService },
+  },
   { path: "**", redirectTo: ''  },
 ];
 
