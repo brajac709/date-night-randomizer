@@ -17,6 +17,7 @@ export class ButtonBarComponent implements OnInit {
   }
 
   onClick(button : MenuItem) {
+    button.click && button.click(button);
     this.event.emit(button);
   }
 

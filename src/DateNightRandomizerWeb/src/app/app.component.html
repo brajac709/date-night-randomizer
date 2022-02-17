@@ -32,7 +32,6 @@
       <app-button-bar 
         class="grow-[5]"
         [buttons]="actionButtons"
-        (event)="onAction($event)"
       ></app-button-bar>
     </div>
   </div>
@@ -44,44 +43,11 @@
       class="flex mx-auto mb-[32px] px-0 py-[16px] max-w-[960px] flex-col items-center" 
     >
 
-      <!-- TODO extract into separate component -->
       <app-jar-image [count]="events.length"></app-jar-image>
 
-
       <router-outlet></router-outlet>
-      <!-- TODO figure out a better way to handle this better
-        perhaps the Router can handle it????
-      -->
-      <div [ngSwitch]="selected" *ngIf="false">
-        <!-- TODO add the data to this-->
-        <!-- figure out a way to inject template from controller -->
-        <app-event-view *ngSwitchCase="'test'"
-          [event]="events[events.length-1]"
-        ></app-event-view>
-        <div *ngSwitchCase="'addEvent'">
-          <app-add-event (submittedEvent)="onAdd($event)"></app-add-event>
-
-          <!-- TODO REMOVE ME : debugging -->
-          <pre>{{ events | json }}</pre>
-          <pre>{{ popped | json }}</pre>
-        </div>
-        <div *ngSwitchCase="'removePoppedEvent'">
-          <app-remove-event 
-            [events]="popped"
-            (remove)="onRemovePopped($event)"
-          ></app-remove-event>
-        </div>
-        <div *ngSwitchCase="'removeEvent'">
-          <app-remove-event 
-            [events]="events"
-            (remove)="onRemoveEvent($event)"
-          ></app-remove-event>
-        </div>
-        <p *ngSwitchDefault>I'm a default</p>
-      </div>
     </div>
   </div>
-
 
   <!-- Popped Events view-->
   <!-- TOOD maybe have this rotate through the list randomly -->

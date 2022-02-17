@@ -50,7 +50,6 @@ export class AppComponent {
     })
 
     // TODO get from settings or something
-    // TODO figure out how to assign templates to this as well.
     this.buttons = [
       {
         label: "Test",  // shows last added event. remove this entry
@@ -61,13 +60,11 @@ export class AppComponent {
         label: "Add Event",
         value: "addEvent", 
         route: "/event/add",
-        // todo click??
       },
       {
         label: "Remove Popped Event",
         value: "removePoppedEvent",
         route: "/event/popped/remove"
-        // todo click??
       }
     ];
 
@@ -75,14 +72,15 @@ export class AppComponent {
       {
         label: "Pop Event",
         value: "popEvent", 
+        click: this.popEvent.bind(this)
       },
       {
         label: "Recycle Popped Events",
         value: "recyclePoppedEvents", 
+        click: this.recyclePoppedEvents.bind(this)
       }
     ]
 
-    // TODO add debug mode options for removing events and whatnot
     if (environment.debugMode) {
       this.buttons.push(...[
         {
@@ -94,56 +92,32 @@ export class AppComponent {
         {
           label: "Reinitialize",
           value: "reinitialize",
+          click: this.reinitialize.bind(this)
         }]);
     }
   }
-
-  onAdd(success : boolean) {
-    this.updateEvents();
-  }
-
 
   onMenuSelect(value : MenuItem) {
     this.selected = value.value;
   }
 
-  onAction(value : MenuItem) {
-    // Add some basic function handling for now
-    switch(value.value) {
-      case 'popEvent':
-        //alert("popping");
-        this.eventsService.popEvent()
-          .subscribe(() => {
-            this.updateEvents();
-          });
-        break;
-      case 'recyclePoppedEvents':
-        //alert("recycling");
-        this.eventsService.recyclePoppedEvents()
-          .subscribe(() => {
-            this.updateEvents();
-          });
-        break;
-      case 'reinitialize':
-        //alert('re-initializing');
-        this.eventsService.reinitialize()
-          .subscribe(() => {
-            this.updateEvents();
-          });
-        break;
-    }
-  }
-
-  onRemovePopped(idx: number) {
-    alert("removing pop");
-    this.eventsService.removePoppedEvent(idx)
+  private popEvent() {
+    this.eventsService.popEvent()
       .subscribe(() => {
         this.updateEvents();
       });
   }
 
-  onRemoveEvent(idx:  number) {
-    this.eventsService.removeEvent(idx)
+  private recyclePoppedEvents() {
+    this.eventsService.recyclePoppedEvents()
+      .subscribe(() => {
+        this.updateEvents();
+      });
+
+  }
+
+  private reinitialize() {
+    this.eventsService.reinitialize()
       .subscribe(() => {
         this.updateEvents();
       });
