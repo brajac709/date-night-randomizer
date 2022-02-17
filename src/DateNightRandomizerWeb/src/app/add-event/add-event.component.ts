@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { DateNightData } from "../../../../DateNightRandomizerConsole/App/dateNightData";
 import { EventsService } from '../services/events.service';
+import { map, mergeMap } from 'rxjs';
 
 @Component({
   selector: 'app-add-event',
@@ -23,7 +24,11 @@ export class AddEventComponent implements OnInit {
 
   onSubmit() {
     this.eventService.addEvent({ ...this.model })
-      .subscribe(() => {
+      .pipe(mergeMap(()=> {
+        // To refresh parent element
+        return this.eventService.getEvents();
+      }))
+      .subscribe((events) => {
         this.submittedEvent.emit(true);
       });
     console.log("Submitted");

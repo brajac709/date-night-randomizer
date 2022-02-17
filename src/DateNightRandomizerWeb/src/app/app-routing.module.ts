@@ -6,7 +6,11 @@ import { RemoveEventComponent } from './remove-event/remove-event.component';
 import { EventResolverService } from './services/event-resolver.service';
 
 const appRoutes : Routes  = [
-  { path: 'test', component: EventViewComponent },
+  {
+     path: 'test',
+     component: EventViewComponent,
+     resolve : { events : EventResolverService }
+  },
   // TODO make child paths
   { path: 'event/add', component: AddEventComponent },
   { 

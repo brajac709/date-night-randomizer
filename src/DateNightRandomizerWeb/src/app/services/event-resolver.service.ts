@@ -27,6 +27,9 @@ export class EventResolverService implements Resolve<DateNightData[]>  {
       case 'event':
         return this.eventService.getEvents().pipe(op);
       default:
+        if (url[url.length-1].path == 'test') {
+          return this.eventService.getEvents().pipe(op);
+        }
         return  of([])
     }
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { DateNightData } from '../../../../DateNightRandomizerConsole/App/dateNightData';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-event-view',
@@ -16,9 +17,19 @@ export class EventViewComponent implements OnInit {
   ];
 
 
-  constructor() { }
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+    if (this.event === undefined) {
+      this.route.data.subscribe(data  => {
+        if (data['events']) {
+          var events = data['events'];
+          if (events.length > 0) {
+            this.event = events[events.length-1];
+          }
+        }
+      });
+    }
   }
 
 }

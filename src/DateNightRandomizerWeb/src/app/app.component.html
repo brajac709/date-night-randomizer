@@ -52,7 +52,7 @@
       <!-- TODO figure out a better way to handle this better
         perhaps the Router can handle it????
       -->
-      <div [ngSwitch]="selected">
+      <div [ngSwitch]="selected" *ngIf="false">
         <!-- TODO add the data to this-->
         <!-- figure out a way to inject template from controller -->
         <app-event-view *ngSwitchCase="'test'"
