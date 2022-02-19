@@ -1,0 +1,22 @@
+<div
+  class="h-full w-full"
+>
+  <ul>
+      <li 
+        class=""
+        *ngFor="let button of buttons"
+      > 
+          <a 
+            class="block w-full py-5 border-2 cursor-poiner hover:bg-blue-300 pl-5 cursor-pointer"
+            [class.bg-blue-400]="selectedButton === button"
+            [routerLink]="button.route"
+            (click)="onSelect(button)"
+          >
+            {{button.label}}
+          </a>
+      </li>
+  </ul>
+
+  
+
+</div>

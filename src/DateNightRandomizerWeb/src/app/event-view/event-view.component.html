@@ -1,0 +1,15 @@
+<p *ngIf="event === undefined">
+    No event selected.
+</p>
+
+<div *ngIf="event" >
+    <!-- TODO try other layout options -->
+    <div *ngFor="let field of fieldMapping" class="grid grid-cols-[repeat(6,_minmax(min-content,1fr))] gap-2">
+        <div class="font-bold col-span-1">
+            {{field.label}}: 
+        </div>
+        <div class="col-span-5">
+            {{field.fcn(event)}}
+        </div>
+    </div>
+</div>

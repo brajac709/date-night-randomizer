@@ -1,0 +1,15 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer components {
+    .input {
+        @apply rounded-md mt-1 block w-full;
+    }
+
+    .btn {
+        @apply rounded-md px-2 py-2;
+    }
+
+}

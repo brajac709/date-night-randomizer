@@ -4,7 +4,7 @@ export class ConfigManager {
     // TODO figure out a better way specify this path
     // maybe an environment variable???  
     // Or is there a way to embed stuff in a node build?
-    private static fileName : string = "src/DateNightRandomizerConsole/dist/config.json";
+    private static fileName : string = "dist/config.json";
     private static _instance : ConfigManager;
 
     private _data : ConfigData;

@@ -4,6 +4,7 @@ import { DateNightData } from './dateNightData';
 import { SettingsProvider } from './settingsProvider';
 import { ConfigManager } from './configManager';
 import { ConsoleApp } from './consoleApp';
+import { WebApp } from './webApp';
 import { RandomizerApp } from './randomizerApp';
 import { env } from 'process';
 import { Octokit } from '@octokit/core';
@@ -112,8 +113,16 @@ const main = async() => {
     if (runTests) {
         await test();
     } else {
+        const appName = configManager.get("appName");
         const baseApp  = await RandomizerApp.getInstance();
-        const consoleApp = new ConsoleApp(baseApp);
+
+        const apps = {
+            'webApp': () => new WebApp(baseApp),
+            'consoleApp': () => new ConsoleApp(baseApp),
+            'default': () => { throw 'Failed to match requested app.' },
+        }
+
+        const consoleApp = (apps[appName] || apps['default'])();
 
         await consoleApp.run();
     }

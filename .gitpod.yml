@@ -1,17 +1,35 @@
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
-  - init: |-
+  - name: Front End Dev Server
+    before: |-
+      npm install -g @angular/cli
+    init: |-
+      cd src/DateNightRandomizerWeb;
+      npm install;
+    command: |-
+      cd src/DateNightRandomizerWeb;
+      ng serve --public-host "$(gp url 4200 | sed 's+http://++')"
+  - name: App Server
+    init: |-
       echo 'init script'; # runs during prebuild
+      cd src/DateNightRandomizerConsole;
       npm install;
       npm run build;
     command: |-
       echo 'start script'
+      cd src/DateNightRandomizerConsole;
+      npm run start
+  - name: Terminal
+    command: |-
       ./.gitpod/setup.sh;
+      cd src/
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
-#ports:
-#  - port: 3000
-#    onOpen: open-preview
+ports:
+  - port: 4200
+    onOpen: open-browser
+  - port: 3000
+    onOpen: ignore
 
 github:
   prebuilds:
@@ -22,3 +40,6 @@ github:
     addComment: false
     addBadge: true
 
+vscode:
+  extensions:
+    - bradlc.vscode-tailwindcss
