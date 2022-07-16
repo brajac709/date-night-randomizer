@@ -16,6 +16,7 @@ import { HeartLoaderComponent } from './heart-loader/heart-loader.component';
 import { JarImageComponent } from './jar-image/jar-image.component';
 import { ButtonBarComponent } from './button-bar/button-bar.component';
 import { AppRoutingModule } from './app-routing.module';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { AppRoutingModule } from './app-routing.module';
     HeartLoaderComponent,
     JarImageComponent,
     ButtonBarComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,

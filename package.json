@@ -13,10 +13,12 @@
     "debug": "node --inspect src/DateNightRandomizerConsole/dist/app.js"
   },
   "devDependencies": {
+    "@google-cloud/functions-framework": "^3.0.0",
     "@types/node": "^8.0.14",
     "typescript": "^3.2.2"
   },
   "dependencies": {
-    "@octokit/core": "^3.5.1"
+    "@octokit/core": "^3.5.1",
+    "firebase": "^9.6.7"
   }
 }

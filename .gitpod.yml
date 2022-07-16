@@ -20,6 +20,8 @@ tasks:
       cd src/DateNightRandomizerConsole;
       npm run start
   - name: Terminal
+    before: |-
+      npm install -g firebase-tools
     command: |-
       ./.gitpod/setup.sh;
       cd src/

@@ -4,12 +4,17 @@ import { AddEventComponent } from './add-event/add-event.component';
 import { EventViewComponent } from './event-view/event-view.component';
 import { RemoveEventComponent } from './remove-event/remove-event.component';
 import { EventResolverService } from './services/event-resolver.service';
+import { LoginComponent } from './login/login.component';
 
 const appRoutes : Routes  = [
   {
      path: 'test',
      component: EventViewComponent,
      resolve : { events : EventResolverService }
+  },
+  {
+    path:  'login',
+    component: LoginComponent,
   },
   // TODO make child paths
   { path: 'event/add', component: AddEventComponent },

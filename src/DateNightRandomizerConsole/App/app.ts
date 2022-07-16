@@ -9,6 +9,35 @@ import { RandomizerApp } from './randomizerApp';
 import { env } from 'process';
 import { Octokit } from '@octokit/core';
 
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyC2TVy4_o34yFXHQGW0XdgPGlfnZSEKF8U",
+  authDomain: "date-night-randomizer-87cd9.firebaseapp.com",
+  projectId: "date-night-randomizer-87cd9",
+  storageBucket: "date-night-randomizer-87cd9.appspot.com",
+  messagingSenderId: "548182190570",
+  appId: "1:548182190570:web:1abc8c5cd2734bc45a2a93",
+  measurementId: "G-FM6Z1SG9Q5"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+
+
+
+
+
+
 const testRandomizer = () => {
     console.log('--- Begin testRandomizer() ---');
     const data = [
