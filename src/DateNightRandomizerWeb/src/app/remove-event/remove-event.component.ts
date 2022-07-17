@@ -1,27 +1,36 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { ActivatedRoute }  from  '@angular/router';
 import { DateNightData } from "../../../../DateNightRandomizerConsole/App/dateNightData";
 import { EventsService }  from '../services/events.service';
-import { take, map, mergeMap } from 'rxjs';
+import { take, map, mergeMap, Subscription, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-remove-event',
   templateUrl: './remove-event.component.html',
   styleUrls: ['./remove-event.component.scss']
 })
-export class RemoveEventComponent implements OnInit {
+export class RemoveEventComponent implements OnInit, OnDestroy {
 
   @Input() events : DateNightData[] = [];
   @Output() remove = new EventEmitter<number>();
+
+  private eventsDisposable : Subscription | undefined;
+  private dataDisposable : Subscription | undefined;
   
   constructor(private  route : ActivatedRoute, private  eventsService : EventsService) { }
 
   ngOnInit(): void {
-    this.route.data.subscribe(data  => {
+    this.dataDisposable = this.route.data.subscribe(data  => {
       if (data['events']) {
-        this.events = data['events'];
+        var getEvents : () => Observable<DateNightData[]> = data['events'];
+        this.eventsDisposable = getEvents().subscribe(es => this.events = es);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.dataDisposable?.unsubscribe();
+    this.eventsDisposable?.unsubscribe();
   }
 
   onRemove(idx : number) : void  {

@@ -54,8 +54,7 @@ export class EventsService implements OnDestroy {
         const value : DateNightData[] = x == null ? [] : x;
         this.poppedEventsEmitter.emit(value);
         return value;
-      }),
-      take(1));
+      }));
   }
 
   addEvent(newEvent : DateNightData) : Observable<void> {
@@ -154,9 +153,7 @@ export class EventsService implements OnDestroy {
         const value : DateNightData[] = x == null ? [] : x;
         this.eventsEmitter.emit(value);
         return value;
-      }),
-      take(1)
-      );
+      }));
   }
 
   reinitialize() : Observable<void> {
