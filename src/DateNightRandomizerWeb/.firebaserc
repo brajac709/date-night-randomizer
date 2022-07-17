@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "date-night-randomizer-87cd9": {
+      "hosting": {
+        "DateNightRandomizerWeb": [
+          "date-night-randomizer-87cd9"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "date-night-randomizer-87cd9"
+  }
+}

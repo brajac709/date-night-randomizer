@@ -1,2 +1,13 @@
-<div>Logging in....</div>
-<div #login></div>
+<div *ngIf="showLogoutButton; else showLogin">
+    <!-- TOOD this probably never gets shown-->
+    <h1> Hello {{(user | async)?.displayName}}!</h1>
+    <button (click)="logout()"
+          class="rounded-md bg-blue-300 hover:bg-gray-400 border-gray-900 border-2 px-3 py-1"
+    >Logout</button>
+</div>
+<ng-template #showLogin>
+    <p>Please login.</p>
+    <button (click)="login()"
+          class="rounded-md bg-blue-300 hover:bg-gray-400 border-gray-900 border-2 px-3 py-1"
+    >Login with Google</button>
+</ng-template>

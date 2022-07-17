@@ -6,6 +6,6 @@
     "runTests" : false,
     "appName" : "webApp",
     "debugMode" : true,
-    "setGitpodCORS": true ,
+    "setGitpodCORS": false ,
     "setAngularEnvironment": true
 }

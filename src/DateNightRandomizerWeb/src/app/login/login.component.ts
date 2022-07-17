@@ -1,54 +1,48 @@
-import { AfterContentInit, AfterViewInit, Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Component, ElementRef, OnInit, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
 import * as  auth from 'firebase/auth';
 import { auth as authui } from 'firebaseui';
+import { Auth, User, signInWithPopup, signOut, GoogleAuthProvider, authState } from '@angular/fire/auth';
+import { EMPTY, Observable, Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { UserTrackingService } from '@angular/fire/analytics';
+import { traceUntilFirst } from '@angular/fire/performance';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements OnDestroy {
 
-  @ViewChild('login') loginRef? : ElementRef<HTMLDivElement>;
-  public isLoading = true;
+  private readonly userDisposable: Subscription|undefined;
+  public readonly user: Observable<User | null> = EMPTY;
 
-  constructor() { }
+  showLoginButton = false;
+  showLogoutButton = false;
 
-  ngOnInit(): void {
-    //alert(this.loginRef);
+
+  constructor(public auth: Auth) { 
+    if (auth) {
+      this.user = authState(this.auth);
+      this.userDisposable = authState(this.auth).pipe(
+        traceUntilFirst('auth'),
+        map(u => !!u)
+      ).subscribe(isLoggedIn => {
+        this.showLoginButton = !isLoggedIn;
+        this.showLogoutButton = isLoggedIn;
+      })
+    }
   }
 
-  
-  ngAfterViewInit() : void {
-    if (this.loginRef === undefined) {
-      return;
-    }
-
-    var ui = new authui.AuthUI(auth.getAuth());
-
-    var uiShownFcn = () => {
-      alert("Shown")
-      this.isLoading  = false;
-    }
-
-
-    ui.start(this.loginRef.nativeElement, {
-      callbacks: {
-        signInSuccessWithAuthResult: function(authResult,  redirectUrl)
-        {
-          return true;
-        },
-        uiShown: uiShownFcn.bind(this), 
-        signInFailure  : function(error) {
-          alert(error.message);
-        },
-      },
-      signInOptions : [
-        {
-          provider: auth.GoogleAuthProvider.PROVIDER_ID
-        },
-      ]
-    })
+  ngOnDestroy() {
+    this.userDisposable?.unsubscribe();
   }
 
+  async login() {
+    return await signInWithPopup(this.auth, new GoogleAuthProvider());
+  }
+
+  async logout() {
+    return await signOut(this.auth);
+  }
 }

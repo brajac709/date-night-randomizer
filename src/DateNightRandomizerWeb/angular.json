@@ -64,9 +64,48 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "firebase.development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/app/services/events.service.ts",
+                  "with": "src/app/services/events.service.firebase.ts"
+                }
+              ]
+            },
+            "firebase.production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                },
+                {
+                  "replace": "src/app/services/events.service.ts",
+                  "with": "src/app/services/events.service.firebase.ts"
+                }
+              ],
+              "outputHashing": "all"
             }
           },
-          "defaultConfiguration": "production"
+          "defaultConfiguration": "firebase.production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -76,11 +115,17 @@
             },
             "development": {
               "browserTarget": "DateNightRandomizerWeb:build:development"
+            },
+            "firebase.production": {
+              "browserTarget": "DateNightRandomizerWeb:build:firebase.production"
+            },
+            "firebase.development": {
+              "browserTarget": "DateNightRandomizerWeb:build:firebase.development"
             }
           },
-          "defaultConfiguration": "development",
+          "defaultConfiguration": "firebase.development",
           "options": {
-            "proxyConfig" : "src/proxy.conf.json"
+            "proxyConfig": "src/proxy.conf.json"
           }
         },
         "extract-i18n": {
@@ -106,9 +151,22 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "DateNightRandomizerWeb:build:production",
+            "firebaseProject": "date-night-randomizer-87cd9",
+            "firebaseHostingSite": "date-night-randomizer-87cd9"
+          }
         }
       }
     }
   },
-  "defaultProject": "DateNightRandomizerWeb"
+  "defaultProject": "DateNightRandomizerWeb",
+  "cli": {
+    "analytics": "17aa41c4-8cb1-47d8-9b5a-ec579c082b6d"
+  }
 }

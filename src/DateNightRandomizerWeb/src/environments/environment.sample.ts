@@ -8,7 +8,7 @@ export const environment = {
     appId: '1:548182190570:web:1abc8c5cd2734bc45a2a93',
     databaseUrl: 'https://date-night-randomizer-87cd9-default-rtdb.firebaseio.com/',
     storageBucket: 'date-night-randomizer-87cd9.appspot.com',
-    apiKey: 'AIzaSyC2TVy4_o34yFXHQGW0XdgPGlfnZSEKF8U',
+    apiKey: '$FirebaseApiKey',
     authDomain: 'date-night-randomizer-87cd9.firebaseapp.com',
     messagingSenderId: '548182190570',
     measurementId: 'G-FM6Z1SG9Q5',
@@ -18,6 +18,10 @@ export const environment = {
   apiUrl: "/api",
   gitpodApi: true,
 };
+
+/* Get $FirebaseApiKey by...
+ * TODO figure out instructions for this
+ */
 
 /*
  * For easier debugging in development mode, you can import the following file

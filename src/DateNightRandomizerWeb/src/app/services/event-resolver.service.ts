@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, Resolve } from '@angular/router';
 import { EventsService } from './events.service';
 import { DateNightData } from "../../../../DateNightRandomizerConsole/App/dateNightData";
-import { of, Observable, EMPTY, map,  mergeMap } from 'rxjs';
+import { of, Observable, EMPTY, map,  mergeMap, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class EventResolverService implements Resolve<DateNightData[]>  {
   {
     // not sure if I want separate resolvers 
     // or just to switch based on route...
-    const op = mergeMap((events : DateNightData[]) => events ? of(events) : of([]));
+    const op = switchMap((events : DateNightData[]) => events ? of(events) : of([]));
     // TODo eventually could use parent if I set that up...
     // but for now just use url
     const url = route.url;
