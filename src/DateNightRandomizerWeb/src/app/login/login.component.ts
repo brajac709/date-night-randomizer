@@ -1,4 +1,5 @@
 import { AfterContentInit, AfterViewInit, Component, ElementRef, OnInit, TemplateRef, ViewChild, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 import * as  auth from 'firebase/auth';
 import { auth as authui } from 'firebaseui';
 import { Auth, User, signInWithPopup, signOut, GoogleAuthProvider, authState } from '@angular/fire/auth';
@@ -21,7 +22,7 @@ export class LoginComponent implements OnDestroy {
   showLogoutButton = false;
 
 
-  constructor(public auth: Auth) { 
+  constructor(public auth: Auth, private router: Router) { 
     if (auth) {
       this.user = authState(this.auth);
       this.userDisposable = authState(this.auth).pipe(
@@ -39,10 +40,12 @@ export class LoginComponent implements OnDestroy {
   }
 
   async login() {
-    return await signInWithPopup(this.auth, new GoogleAuthProvider());
+    await signInWithPopup(this.auth, new GoogleAuthProvider());
+    this.router.navigate(['/']);
   }
 
   async logout() {
-    return await signOut(this.auth);
+    await signOut(this.auth);
+    this.router.navigate(['/']);
   }
 }

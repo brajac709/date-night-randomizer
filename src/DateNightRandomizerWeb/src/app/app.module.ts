@@ -28,6 +28,7 @@ import { provideMessaging,getMessaging } from '@angular/fire/messaging';
 import { providePerformance,getPerformance } from '@angular/fire/performance';
 import { provideRemoteConfig,getRemoteConfig } from '@angular/fire/remote-config';
 import { provideStorage,getStorage } from '@angular/fire/storage';
+import { AccountInfoComponent } from './account-info/account-info.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { provideStorage,getStorage } from '@angular/fire/storage';
     JarImageComponent,
     ButtonBarComponent,
     LoginComponent,
+    AccountInfoComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,22 @@
+<div class="px-10">
+    <button (click)="showMenu = !showMenu">
+        <img src="{{(user | async)?.photoURL}}" height="32" width="32"/>
+    </button>
+</div>
+<div *ngIf="showMenu" class="absolute right-0 border border-black bg-white text-red-600 mx-5 w-[200px]">
+    <ul class="list-none">
+        <li>
+            <div class="p-2">
+                {{(user | async)?.displayName}}
+            </div>
+        </li>
+        <hr class="width-full">
+        <li class="hover:bg-blue-300">
+            <a (click)="logout()" class="cursor-pointer">
+                <div class="p-2">
+                    Logout
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
