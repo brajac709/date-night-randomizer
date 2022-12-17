@@ -5,6 +5,7 @@ import { EventViewComponent } from './event-view/event-view.component';
 import { RemoveEventComponent } from './remove-event/remove-event.component';
 import { EventResolverService } from './services/event-resolver.service';
 import { LoginComponent } from './login/login.component';
+import { AccountAdminComponent } from './account-admin/account-admin.component';
 //import { AngularFireAuthGuard, hasCustomClaim, redirectUnauthorizedTo, redirectLoggedInTo, canActivate } from '@angular/fire/compat/auth-guard';
 import { redirectUnauthorizedTo, redirectLoggedInTo, canActivate } from '@angular/fire/auth-guard';
 
@@ -23,6 +24,11 @@ const appRoutes : Routes  = [
     component: LoginComponent,
     //canActivate: [AngularFireAuthGuard]
     ...canActivate(redirectLoggedInToIndex)
+  },
+  {
+    path: 'user/:uid',
+    component: AccountAdminComponent,
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   // TODO make child paths
   { path: 'event/add', component: AddEventComponent, ...canActivate(redirectUnauthorizedToLogin) },

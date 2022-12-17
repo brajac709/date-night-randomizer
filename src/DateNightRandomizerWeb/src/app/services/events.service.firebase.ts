@@ -39,9 +39,9 @@ export class EventsService implements OnDestroy {
     }
     // TODO figure out the the profile name from settings/environment
     var profile = 'First';
-    this.currentProfileRef = ref(database, `/profiles/${profile}`);
-    this.eventsRef = ref(database, `/profiles/${profile}/events`);
-    this.poppedEventsRef = ref(database, `/profiles/${profile}/poppedEvents`);
+    this.currentProfileRef = ref(this.database, `/profiles/${profile}`);
+    this.eventsRef = ref(this.database, `/profiles/${profile}/events`);
+    this.poppedEventsRef = ref(this.database, `/profiles/${profile}/poppedEvents`);
   }
 
   ngOnDestroy() {

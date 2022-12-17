@@ -1,0 +1,21 @@
+<h2>Account Administration</h2>
+<ul>
+    <li class="block border-2 border-black w-100%"
+    >Current Profile</li>
+    <li>
+        <ul>
+            <li>
+                {{currentProfileName | async}}
+            </li>
+        </ul>
+    </li>
+    <li>Add A profile</li>
+    <li>Enrolled Profiles</li>
+    <li>
+        <ul>
+            <li *ngFor="let profileName of (profileNames | async)">
+                {{profileName}}
+            </li>
+        </ul>
+    </li>
+</ul>

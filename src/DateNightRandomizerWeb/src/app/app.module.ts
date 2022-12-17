@@ -29,6 +29,7 @@ import { providePerformance,getPerformance } from '@angular/fire/performance';
 import { provideRemoteConfig,getRemoteConfig } from '@angular/fire/remote-config';
 import { provideStorage,getStorage } from '@angular/fire/storage';
 import { AccountInfoComponent } from './account-info/account-info.component';
+import { AccountAdminComponent } from './account-admin/account-admin.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { AccountInfoComponent } from './account-info/account-info.component';
     ButtonBarComponent,
     LoginComponent,
     AccountInfoComponent,
+    AccountAdminComponent,
   ],
   imports: [
     BrowserModule,
