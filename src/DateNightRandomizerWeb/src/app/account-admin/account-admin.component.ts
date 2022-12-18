@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { UserProfile } from 'firebase/auth';
 import { ProfilesService } from '../services/profiles.service.firebase';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 
 
@@ -10,7 +10,7 @@ import {map, take} from 'rxjs/operators';
   templateUrl: './account-admin.component.html',
   styleUrls: ['./account-admin.component.scss']
 })
-export class AccountAdminComponent implements OnInit {
+export class AccountAdminComponent implements OnInit, OnDestroy {
 
   profileNames : Observable<string[]>;
   currentProfileName : Observable<string>;
@@ -32,5 +32,12 @@ export class AccountAdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+
+  }
+
+  ngOnDestroy(): void {
   }
 }

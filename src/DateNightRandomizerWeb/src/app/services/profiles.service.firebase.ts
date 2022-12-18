@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, EMPTY } from 'rxjs';
+import { Observable, EMPTY, BehaviorSubject, ReplaySubject, Subscription } from 'rxjs';
 import { switchMap, map } from 'rxjs/operators';
 import { Database, ref, objectVal, listVal, DatabaseReference, push, set, fromRef, ListenEvent, list} from '@angular/fire/database';
 import { Auth, User, authState } from '@angular/fire/auth';
@@ -27,7 +27,9 @@ export class ProfilesService implements OnDestroy {
 
   private user : Observable<User | null> = EMPTY;
   private profiles : Observable<string[] | null> = EMPTY;
+  private userProfilesSubject : ReplaySubject<UserProfiles | null> = new ReplaySubject<UserProfiles | null>(1);
   private userProfiles : Observable<UserProfiles | null> = EMPTY;
+  private userProfiles$: Subscription;
   private currentProfile : Observable<string | null> = EMPTY;
 
   //private userProfilesRef : DatabaseReference;
@@ -44,7 +46,9 @@ export class ProfilesService implements OnDestroy {
       this.user = authState(this.auth);
     }
 
-    this.userProfiles = this.user.pipe(
+    //this.userProfiles = this.user.pipe(
+    //this.user.pipe(
+    this.userProfiles$ = this.user.pipe(
       switchMap((user : User | null) => {
         if (user == null) {
           return [];
@@ -61,6 +65,7 @@ export class ProfilesService implements OnDestroy {
             retVal[key] = query.snapshot.val();
           }
         })
+        this.userProfilesSubject.next(retVal);
         return retVal
       })
       /*
@@ -70,7 +75,8 @@ export class ProfilesService implements OnDestroy {
         return retVal;
       })
       */
-    );
+    )
+    .subscribe();
 
     // TODO where user == ????
     //this.userProfilesRef = ref(this.database, `/user/${this.user.uid}/profiles`);
@@ -85,10 +91,11 @@ export class ProfilesService implements OnDestroy {
   }
 
   ngOnDestroy() {
-
+    this.userProfiles$.unsubscribe();
   }
 
   getUserProfiles() : Observable<UserProfiles> {
-    return this.userProfiles.pipe(map(x => x === null ? {} : x));
+    //return this.userProfiles.pipe(map(x => x === null ? {} : x));
+    return this.userProfilesSubject.asObservable().pipe(map(x => x === null ? {} : x));
   }
 }
