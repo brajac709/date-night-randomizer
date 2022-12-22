@@ -1,5 +1,6 @@
 <h2>Account Administration</h2>
 <ul>
+    <!--
     <li class="block border-2 border-black w-100%"
     >Current Profile</li>
     <li>
@@ -9,13 +10,28 @@
             </li>
         </ul>
     </li>
-    <li>Add A profile</li>
+    -->
     <li>Enrolled Profiles</li>
     <li>
         <ul>
-            <li *ngFor="let profileName of (profileNames | async)">
-                {{profileName}}
+            <li *ngFor="let profileName of (profileNames | async)" >
+                <span [ngClass]="{'font-bold': profileName == (currentProfileName | async)}">
+                    {{profileName}}
+                </span>
+                <span *ngIf="profileName == (currentProfileName | async)" 
+                      class="text-gray-500">
+                    - Current Profile
+                </span>
             </li>
         </ul>
+    </li>
+    <li class="pt-5 pb-2">
+        <input type="text" placeholder="New Profile Name" class="input" [(ngModel)]="profileName"/>
+    </li>
+    <!-- todo make this a button-->
+    <li>
+        <button class="hover:bg-blue-200 bg-blue-300 px-2 cursor-pointer rounded-lg border border-black"  (click)="onAddProfile()">
+            Add a profile
+        </button>
     </li>
 </ul>

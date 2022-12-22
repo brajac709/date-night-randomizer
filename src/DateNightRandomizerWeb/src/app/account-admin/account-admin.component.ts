@@ -15,6 +15,8 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
   profileNames : Observable<string[]>;
   currentProfileName : Observable<string>;
 
+  public profileName : string = "";
+
   constructor(private profilesService : ProfilesService) { 
     this.profileNames = this.profilesService.getUserProfiles().pipe(map(x => Object.keys(x)))
     // TODO make this a subject so we don't make multiple calls
@@ -39,5 +41,12 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+  }
+
+  public onAddProfile(): void {
+    // TODO show a new box for Name
+    // or just have the box always up?
+    // or use a dialog? <-- Probably this eventually but for now will probably do always up
+    window.alert(this.profileName);
   }
 }
