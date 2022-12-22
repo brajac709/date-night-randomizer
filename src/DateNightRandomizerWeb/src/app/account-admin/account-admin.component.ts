@@ -85,6 +85,6 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
     }
     this.profilesService.addUserProfile(this.profileName)
       .pipe(take(1))
-      .subscribe(_ => console.log("Profile Added"));
+      .subscribe(_ => { console.log("Profile Added"); this.profileName = "" });
   }
 }
