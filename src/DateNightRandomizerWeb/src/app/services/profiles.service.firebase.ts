@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, EMPTY, BehaviorSubject, ReplaySubject, Subscription, of, take } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { Observable, EMPTY, BehaviorSubject, ReplaySubject, Subscription, of, take, forkJoin } from 'rxjs';
+import { switchMap, map, mergeMap, catchError } from 'rxjs/operators';
 import { Database, ref, objectVal, listVal, DatabaseReference, push, set, fromRef, ListenEvent, list} from '@angular/fire/database';
 import { Auth, User, authState } from '@angular/fire/auth';
 import { traceUntilFirst } from '@angular/fire/performance';
@@ -15,9 +15,18 @@ type UserProfileDatabase = {
   [idx : number] : boolean
 };
 
-type UserProfiles = {
+type ProfileUsers = {
+  [userId : string] : boolean
+}
+
+export type UserProfiles = {
   // True means it is the active profile
-  [profileName : string] : boolean
+  [profileId : string] : UserProfileData
+}
+
+export type UserProfileData = {
+  selected : boolean,
+  name: string
 }
 
 // TODO may change any to DateNightEvents  but not sure yet
@@ -25,7 +34,7 @@ type Profile = {
   name: string,
   events:any[],
   poppedEvents:any[],
-  users:UserProfiles,
+  users:ProfileUsers,
 }
 
 @Injectable({
@@ -69,15 +78,53 @@ export class ProfilesService implements OnDestroy {
       }),
       map(queries => {
         const retVal : UserProfiles = {};
+        const nameObservables : {[profileId : string] : Observable<string> } = {};
         queries.forEach(query => {
           const key = query.snapshot.ref.key;
           if (key !== null) {
-            retVal[key] = query.snapshot.val();
+            retVal[key] = {
+              selected: query.snapshot.val(),
+              // TODO may want to use an intermediate type instead of temporary empty...
+              name: ""
+            };
+            
+            const profileNameRef = ref(this.database, `/profiles/${key}/name`);
+            nameObservables[key] = objectVal<string>(profileNameRef).pipe(take(1),catchError(error => { console.log(error); return ""}));
           }
         })
+        // TODO not sure this is the right way to retun this...
+        return {
+          profiles: of(retVal),
+          names: nameObservables,
+          //names: forkJoin(nameObservables)
+        }
+
+        /*
         this.userProfilesSubject.next(retVal);
         return retVal
+        */
+      }),
+      // TODO these aren't working....
+      // try adding some catch handlers maybe???  
+      mergeMap(d => {
+        const names = forkJoin(d.names);
+        return of({
+          profiles: d.profiles,
+          names: names
+        });
+      }),
+      mergeMap(d => forkJoin([d.profiles, d.names])),
+      map(([profiles, names]) => {
+        const keys = Object.keys(profiles);
+
+        keys.forEach(key => {
+          profiles[key].name = names[key];
+        });
+
+        this.userProfilesSubject.next(profiles);
+        return profiles
       })
+
       /*
       map((userProfiles : UserProfileDatabase[] | null) => {
         const retVal : UserProfiles = {};

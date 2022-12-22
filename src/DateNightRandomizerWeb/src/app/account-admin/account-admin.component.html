@@ -14,11 +14,11 @@
     <li>Enrolled Profiles</li>
     <li>
         <ul>
-            <li *ngFor="let profileName of (profileNames | async)" >
-                <span [ngClass]="{'font-bold': profileName == (currentProfileName | async)}">
-                    {{profileName}}
+            <li *ngFor="let profile of (profiles | async)" >
+                <span [ngClass]="{'font-bold': profile.selected}">
+                    {{profile.name}}
                 </span>
-                <span *ngIf="profileName == (currentProfileName | async)" 
+                <span *ngIf="profile.selected" 
                       class="text-gray-500">
                     - Current Profile
                 </span>
