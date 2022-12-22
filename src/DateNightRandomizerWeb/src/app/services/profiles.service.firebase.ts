@@ -190,17 +190,30 @@ export class ProfilesService implements OnDestroy {
 
   }
 
-  /*
-  addEvent(newEvent : DateNightData) : Observable<void> {
-    //var newEventRef = push(this.eventsRef, newEvent);
-    var newEventKey = push(this.eventsRef).key;
+  selectUserProfile(profileId: string) : Observable<void> {
+    return this.user.pipe(
+      take(1),
+      mergeMap(user => forkJoin([of(user), this.userProfilesSubject.asObservable()])),
+      switchMap(([user, profiles] : [User | null, UserProfiles | null]) => {
+        if (user == null || profiles == null) {
+          // TODO maybe log an error or throw an error.... not sure how rxjs error handling works
+          return of();
+        }
 
-    const updates : any = {};
-    updates[`/${newEventKey}`] = newEvent;
+        const keys = Object.keys(profiles);
+        const updates : any = {};
+        // Clear all selected profiles for this user
+        keys.filter(k => profiles[k].selected).forEach(k => {
+            updates[`/profiles/${k}/users/${user.uid}`] = false;
+            updates[`/users/${user.uid}/profiles/${k}`] = false;
+          }
+        )
+        updates[`/profiles/${profileId}/users/${user.uid}`] = true;
+        updates[`/users/${user.uid}/profiles/${profileId}`] = true; 
 
-    return from(update(this.eventsRef, updates)).
-    pipe(take(1));
-    //return fromRef(newEventRef, ListenEvent.added).pipe(map(x => {}));
+        return update(this.databaseRef, updates);
+      })
+    );
   }
-  */
+
 }
