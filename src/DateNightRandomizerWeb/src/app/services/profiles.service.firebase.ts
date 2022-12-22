@@ -193,7 +193,7 @@ export class ProfilesService implements OnDestroy {
   selectUserProfile(profileId: string) : Observable<void> {
     return this.user.pipe(
       take(1),
-      mergeMap(user => forkJoin([of(user), this.userProfilesSubject.asObservable()])),
+      mergeMap(user => forkJoin([of(user), this.userProfilesSubject.pipe(take(1))])),
       switchMap(([user, profiles] : [User | null, UserProfiles | null]) => {
         if (user == null || profiles == null) {
           // TODO maybe log an error or throw an error.... not sure how rxjs error handling works
