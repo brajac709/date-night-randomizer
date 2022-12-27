@@ -6,6 +6,7 @@ import { Auth, User, authState } from '@angular/fire/auth';
 import { traceUntilFirst } from '@angular/fire/performance';
 import { isNullOrUndefined } from 'util';
 import { remove, update } from 'firebase/database';
+import { collection } from 'firebase/firestore';
 
 
 const databaseKey = 'databaseKey';
@@ -214,6 +215,45 @@ export class ProfilesService implements OnDestroy {
         return update(this.databaseRef, updates);
       })
     );
+  }
+
+  deleteUserFromProfile(profileId: string, keepIfNoUsers: boolean = false) : Observable<void> {
+    // TODO when keepIfNoUsers is false, get the profile users
+    // TODO do we want error checking that no events exist?  or dialog or something?
+
+    return this.user.pipe(
+      take(1),
+      // TODO maybe only do this if keepIfNoUsers is false
+      mergeMap(user => {
+        const profileUsersCount = list(ref(this.database, `/profiles/${profileId}/users`))
+          .pipe(
+            take(1),
+            map(profileUsers => profileUsers.length)
+          );
+        return forkJoin([of(user), this.userProfilesSubject.pipe(take(1)), profileUsersCount])
+      }),
+      switchMap(([user, userProfiles, profileUsersCount]) => {
+        if (user == null || userProfiles == null || profileUsersCount == 0)
+        {
+          // TODO maybe log an error or throw an error.... not sure how rxjs error handling works
+          return of();
+        }
+        const updates : any = {};
+        updates[`/users/${user.uid}/profiles/${profileId}`] = null;
+        if (profileUsersCount == 1 && !keepIfNoUsers)
+        {
+          // TODO do we want some kind of confirmation here??
+          updates[`/profiles/${profileId}`] = null;
+        }
+        else {
+          updates[`/profiles/${profileId}/users/${user.uid}`] = null;
+        }
+
+        return update(this.databaseRef, updates);
+      })
+    );
+
+    //return of();
   }
 
 }

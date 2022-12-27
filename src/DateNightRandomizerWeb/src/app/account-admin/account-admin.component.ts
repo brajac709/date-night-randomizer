@@ -89,6 +89,7 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
   }
 
   onSelectProfile(profileId : string): void {
+    // TODO add some kind of animation transition to make the swap more apparent
     this.profilesService.selectUserProfile(profileId)
       .pipe(take(1))
       .subscribe(() => console.log("New Profile selected"));
