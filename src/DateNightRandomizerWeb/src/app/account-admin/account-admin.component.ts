@@ -94,4 +94,10 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
       .pipe(take(1))
       .subscribe(() => console.log("New Profile selected"));
   }
+
+  onDeleteUserProfile(profileId : string) : void {
+    this.profilesService.deleteUserFromProfile(profileId)
+      .pipe(take(1))
+      .subscribe(() => console.log("Profile Deleted"));
+  }
 }
