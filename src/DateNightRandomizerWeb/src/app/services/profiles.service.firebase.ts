@@ -335,11 +335,34 @@ export class ProfilesService implements OnDestroy {
     );
   }
 
-  inviteUserToProfile() {
-    // Send an invitation to another user.
-    // Once they accept, they will be added as a proper user to the profile
+  // TODO how to get user ID?
+  inviteUserToProfile(uid: string, profileId : string) {
+    return this.user.pipe(
+      take(1),
+      map(user => {
+        return {
+          user: of(user),
+          profileName: objectVal<string>(ref(this.database, `/profiles/${profileId}/name`))
+        }
+      }),
+      mergeMap(d => forkJoin(d)),
+      switchMap(d => {
+        if (d.user == null) {
+          console.error("Not authenticated");
+          return of();
+        }
 
-    // TODO 
+        const updates : any = {};
+        const now = new Date().getTime();
+        updates[`/profiles/${profileId}/invitedUsers/${uid}`] = now;
+        updates[`/users/${d.user.uid}/profileInvitations/${profileId}`] = {
+          invitedTimestamp: now,
+          name: d.profileName
+        };
+
+        return update(this.databaseRef, updates);
+      })
+    );
 
   }
 
