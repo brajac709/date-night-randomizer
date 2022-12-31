@@ -1,6 +1,8 @@
 <div class="px-10">
-    <button (click)="showMenu = !showMenu">
+    <button (click)="showMenu = !showMenu" class="relative">
         <img src="{{(user | async)?.photoURL}}" height="32" width="32" class="rounded-full"/>
+        <span *ngIf="notifications | async"
+            class="bg-red-500 rounded-full border border-white h-3 w-3 absolute top-0 -right-0.5"></span>
     </button>
 </div>
 <div *ngIf="showMenu" class="absolute right-0 border border-black bg-white text-red-600 mx-5 w-[200px]">

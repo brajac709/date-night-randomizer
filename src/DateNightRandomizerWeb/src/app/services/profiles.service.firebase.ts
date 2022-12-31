@@ -52,8 +52,10 @@ export class ProfilesService implements OnDestroy {
   private user : Observable<User | null> = EMPTY;
   private profiles : Observable<string[] | null> = EMPTY;
   private userProfilesSubject : ReplaySubject<UserProfiles | null> = new ReplaySubject<UserProfiles | null>(1);
+  private userProfileInvitationsSubject : ReplaySubject<ProfileInvitation[]> = new ReplaySubject<ProfileInvitation[]>(1);
   private userProfiles : Observable<UserProfiles | null> = EMPTY;
   private userProfiles$: Subscription;
+  private userProfileInvitations$: Subscription;
   private currentProfile : Observable<string | null> = EMPTY;
 
   //private userProfilesRef : DatabaseReference;
@@ -142,6 +144,34 @@ export class ProfilesService implements OnDestroy {
     )
     .subscribe();
 
+    this.userProfileInvitations$ = this.user.pipe(
+      mergeMap(user => {
+        if (user == null) {
+          return throwError(() => "Not authenticated")
+        }
+        const profileInvitations = list(ref(this.database, `/users/${user.uid}/profileInvitations`));
+
+        return profileInvitations;
+      }),
+      map(queries => queries.map(query => {
+          const invitation = query.snapshot.val();
+          return {
+            key: query.snapshot.key,
+            invitedTimestamp: invitation.invitedTimestamp,
+            name: invitation.name,
+          } as ProfileInvitation
+        })
+      ),
+      catchError(err => {
+        console.error(err);
+        return [];
+      }),
+      map(inv => {
+        this.userProfileInvitationsSubject.next(inv)
+        return inv;
+      })
+    ).subscribe();
+
     // TODO where user == ????
     //this.userProfilesRef = ref(this.database, `/user/${this.user.uid}/profiles`);
 
@@ -158,6 +188,7 @@ export class ProfilesService implements OnDestroy {
 
   ngOnDestroy() {
     this.userProfiles$.unsubscribe();
+    this.userProfileInvitations$.unsubscribe();
   }
 
   getUserProfiles() : Observable<UserProfiles> {
@@ -263,29 +294,7 @@ export class ProfilesService implements OnDestroy {
   }
 
   getProfileInvitations() : Observable<ProfileInvitation[]> {
-    return this.user.pipe(
-      take(1),
-      mergeMap(user => {
-        if (user == null) {
-          return throwError(() => "Not authenticated")
-        }
-        const profileInvitations = list(ref(this.database, `/users/${user.uid}/profileInvitations`));
-
-        return forkJoin({
-          user: of(user),
-          invitations: profileInvitations
-        });
-      }),
-      map(queries => queries.invitations.map(query => {
-          const invitation = query.snapshot.val();
-          return {
-            key: query.snapshot.key,
-            invitedTimestamp: invitation.invitedTimestamp,
-            name: invitation.name,
-          } as ProfileInvitation
-        })
-      )
-    );
+    return this.userProfileInvitationsSubject.asObservable();
   }
 
   inviteUserToProfile() {

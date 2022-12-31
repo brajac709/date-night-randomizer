@@ -4,6 +4,7 @@ import { Auth, User, signInWithPopup, signOut, GoogleAuthProvider, authState } f
 import { EMPTY, Observable, Subscription } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { traceUntilFirst } from '@angular/fire/performance';
+import { ProfilesService } from '../services/profiles.service.firebase';
 
 @Component({
   selector: 'app-account-info',
@@ -14,14 +15,18 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
 
   public readonly user: Observable<User | null> = EMPTY;
   public showMenu : boolean = false;
+  public notifications : Observable<boolean> = EMPTY;
 
   private opening = false;
 
 
-  constructor(public auth: Auth, private router: Router) { 
+  constructor(public auth: Auth, private router: Router, private profilesService : ProfilesService) { 
     if (auth) {
       this.user = authState(this.auth);
     }
+
+    this.notifications = profilesService.getProfileInvitations()
+      .pipe(map(invitations => invitations.length > 0));
   }
 
   @HostListener('click')
