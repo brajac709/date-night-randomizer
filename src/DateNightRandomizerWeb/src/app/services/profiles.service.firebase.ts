@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, EMPTY, BehaviorSubject, ReplaySubject, Subscription, of, take, forkJoin } from 'rxjs';
+import { Observable, EMPTY, BehaviorSubject, ReplaySubject, Subscription, of, take, forkJoin, throwError } from 'rxjs';
 import { switchMap, map, mergeMap, catchError } from 'rxjs/operators';
 import { Database, ref, objectVal, listVal, DatabaseReference, push, set, fromRef, ListenEvent, list} from '@angular/fire/database';
 import { Auth, User, authState } from '@angular/fire/auth';
@@ -28,6 +28,12 @@ export type UserProfiles = {
 export type UserProfileData = {
   selected : boolean,
   name: string
+}
+
+export type ProfileInvitation = {
+  key: string,
+  invitedTimestamp: number,
+  name: string,
 }
 
 // TODO may change any to DateNightEvents  but not sure yet
@@ -254,6 +260,40 @@ export class ProfilesService implements OnDestroy {
     );
 
     //return of();
+  }
+
+  getProfileInvitations() : Observable<ProfileInvitation[]> {
+    return this.user.pipe(
+      take(1),
+      mergeMap(user => {
+        if (user == null) {
+          return throwError(() => "Not authenticated")
+        }
+        const profileInvitations = list(ref(this.database, `/users/${user.uid}/profileInvitations`));
+
+        return forkJoin({
+          user: of(user),
+          invitations: profileInvitations
+        });
+      }),
+      map(queries => queries.invitations.map(query => {
+          const invitation = query.snapshot.val();
+          return {
+            key: query.snapshot.key,
+            invitedTimestamp: invitation.invitedTimestamp,
+            name: invitation.name,
+          } as ProfileInvitation
+        })
+      )
+    );
+  }
+
+  inviteUserToProfile() {
+    // Send an invitation to another user.
+    // Once they accept, they will be added as a proper user to the profile
+
+    // TODO 
+
   }
 
 }
