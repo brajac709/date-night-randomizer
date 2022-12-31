@@ -317,6 +317,24 @@ export class ProfilesService implements OnDestroy {
     );
   }
 
+  rejectProfileInvitation(profileId: string) : Observable<void> {
+    return this.user.pipe(
+      take(1),
+      switchMap(user => {
+        if (user == null) {
+          console.error("Not authenticated");
+          return of();
+        }
+
+        const updates : any = {};
+        updates[`/profiles/${profileId}/invitedUsers/${user.uid}`] = null;
+        updates[`/users/${user.uid}/profileInvitations/${profileId}`] = null;
+
+        return update(this.databaseRef, updates);
+      })
+    );
+  }
+
   inviteUserToProfile() {
     // Send an invitation to another user.
     // Once they accept, they will be added as a proper user to the profile

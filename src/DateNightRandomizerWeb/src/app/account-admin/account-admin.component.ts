@@ -105,13 +105,14 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
   }
 
   onAcceptProfileInvitation(profileId: string) : void {
-    // TODO
     this.profilesService.acceptProfileInvitation(profileId)
       .pipe(take(1))
       .subscribe(() => console.log("Invitation Accepted"));
   }
 
   onRejectProfileInvitation(profileId: string) : void {
-    // TODO
+    this.profilesService.rejectProfileInvitation(profileId)
+      .pipe(take(1))
+      .subscribe(() => console.log("Invitation Rejected"));
   }
 }
