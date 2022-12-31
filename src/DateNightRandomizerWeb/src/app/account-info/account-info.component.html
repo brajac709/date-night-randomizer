@@ -1,7 +1,8 @@
 <div class="px-10">
     <button (click)="showMenu = !showMenu" class="relative">
         <img src="{{(user | async)?.photoURL}}" height="32" width="32" class="rounded-full"/>
-        <span *ngIf="notifications | async"
+        <!-- NOTE: This "!" is for non-null assertion. Not sure why typescript is thinking it could be null -->
+        <span *ngIf="(notificationCount | async)! > 0"
             class="bg-red-500 rounded-full border border-white h-3 w-3 absolute top-0 -right-0.5"></span>
     </button>
 </div>
@@ -11,7 +12,9 @@
 
             <a [routerLink]="['/user',(user | async)?.uid]" (click)="showMenu = false">
                 <div class="p-2">
-                    {{(user | async)?.displayName}}
+                    <span>{{(user | async)?.displayName}}</span>
+                    <span class="rounded-md bg-red-500 text-white ml-3 px-2.5 py-1"
+                        >{{(notificationCount | async) ?? 0}}</span>
                 </div>
             </a>
         </li>

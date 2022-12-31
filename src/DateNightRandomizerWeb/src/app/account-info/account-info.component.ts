@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, HostListener} from '@angular/core';
 import { Router } from '@angular/router';
 import { Auth, User, signInWithPopup, signOut, GoogleAuthProvider, authState } from '@angular/fire/auth';
-import { EMPTY, Observable, Subscription } from 'rxjs';
+import { EMPTY, Observable, Subscription, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { traceUntilFirst } from '@angular/fire/performance';
 import { ProfilesService } from '../services/profiles.service.firebase';
@@ -15,7 +15,7 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
 
   public readonly user: Observable<User | null> = EMPTY;
   public showMenu : boolean = false;
-  public notifications : Observable<boolean> = EMPTY;
+  public notificationCount : Observable<number> = of(0);
 
   private opening = false;
 
@@ -25,8 +25,8 @@ export class AccountInfoComponent implements OnInit, OnDestroy {
       this.user = authState(this.auth);
     }
 
-    this.notifications = profilesService.getProfileInvitations()
-      .pipe(map(invitations => invitations.length > 0));
+    this.notificationCount = profilesService.getProfileInvitations()
+      .pipe(map(invitations => invitations.length));
   }
 
   @HostListener('click')
