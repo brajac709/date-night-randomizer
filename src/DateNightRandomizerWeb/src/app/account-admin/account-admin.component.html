@@ -45,10 +45,35 @@
     <li class="pt-5 pb-2">
         <input type="text" placeholder="New Profile Name" class="input" [(ngModel)]="profileName"/>
     </li>
-    <!-- todo make this a button-->
     <li>
         <button class="hover:bg-blue-200 bg-blue-300 px-2 cursor-pointer rounded-lg border border-black"  (click)="onAddProfile()">
             Add a profile
         </button>
+    </li>
+    <li>
+        Profile Invitations
+    </li>
+    <li>
+        <ul class="grid grid-cols-2">
+            <!-- TOOD update this to invitations-->
+            <ng-container *ngFor="let profile of (profileInvitations | async)">
+                <li class="pr-4">
+                    <span>
+                        {{profile.name}}
+                    </span>
+                </li>
+                <li class="pb-2">
+                    <!-- todo add text and make them look more like buttons -->
+                    <button (click)="onAcceptProfileInvitation(profile.id)"
+                        class="px-2 rounded-tl-md rounded-bl-md border-black border border-r-0 bg-blue-500 hover:bg-blue-200">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </button>
+                    <button (click)="onRejectProfileInvitation(profile.id)"
+                        class="px-2 rounded-tr-md rounded-br-md border-black border border-l-0 bg-blue-500 hover:bg-blue-200">
+                        <i class="bi bi-trash3-fill"></i>
+                    </button>
+                </li>
+            </ng-container>
+        </ul>
     </li>
 </ul>

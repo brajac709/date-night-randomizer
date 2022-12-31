@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { UserProfile } from 'firebase/auth';
-import { ProfilesService, UserProfileData } from '../services/profiles.service.firebase';
+import { ProfileInvitation, ProfilesService, UserProfileData } from '../services/profiles.service.firebase';
 import {Observable, Subscription} from 'rxjs';
 import {map, take} from 'rxjs/operators';
 
@@ -32,6 +32,7 @@ function compareUserProfileViews(v1 : UserProfileView, v2 : UserProfileView) : n
 export class AccountAdminComponent implements OnInit, OnDestroy {
 
   profiles : Observable<UserProfileView[]>;
+  profileInvitations : Observable<ProfileInvitation[]>;
   profileNames : Observable<string[]>;
   currentProfileName : Observable<string>;
 
@@ -63,6 +64,8 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
       }
       return `ERROR: there were ${trueProfileIds.length} selected profiles`
     }))
+
+    this.profileInvitations = this.profilesService.getProfileInvitations();
   }
 
   ngOnInit(): void {
@@ -99,5 +102,13 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
     this.profilesService.deleteUserFromProfile(profileId)
       .pipe(take(1))
       .subscribe(() => console.log("Profile Deleted"));
+  }
+
+  onAcceptProfileInvitation(profileId: string) : void {
+    // TODO
+  }
+
+  onRejectProfileInvitation(profileId: string) : void {
+    // TODO
   }
 }

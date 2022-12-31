@@ -31,7 +31,7 @@ export type UserProfileData = {
 }
 
 export type ProfileInvitation = {
-  key: string,
+  id: string,
   invitedTimestamp: number,
   name: string,
 }
@@ -156,7 +156,7 @@ export class ProfilesService implements OnDestroy {
       map(queries => queries.map(query => {
           const invitation = query.snapshot.val();
           return {
-            key: query.snapshot.key,
+            id: query.snapshot.key,
             invitedTimestamp: invitation.invitedTimestamp,
             name: invitation.name,
           } as ProfileInvitation
