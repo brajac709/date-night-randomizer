@@ -7,7 +7,7 @@
     <ul class="list-none">
         <li class="hover:bg-blue-300">
 
-            <a [routerLink]="['/user',(user | async)?.uid]" >
+            <a [routerLink]="['/user',(user | async)?.uid]" (click)="showMenu = false">
                 <div class="p-2">
                     {{(user | async)?.displayName}}
                 </div>
