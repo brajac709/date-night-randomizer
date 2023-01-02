@@ -1,7 +1,7 @@
 import { Injectable, EventEmitter, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { EMPTY, Observable, of, throwError, Subscription, forkJoin, from } from 'rxjs';
-import { catchError, retry, map, mergeMap, take } from 'rxjs/operators';
+import { EMPTY, Observable, of, throwError, Subscription, forkJoin, from, ReplaySubject} from 'rxjs';
+import { catchError, retry, map, mergeMap, take, switchMap } from 'rxjs/operators';
 import { DateNightData } from "../../../../DateNightRandomizerConsole/App/dateNightData";
 import { Settings } from "../../../../DateNightRandomizerConsole/App/settings";
 import { environment } from '../../environments/environment';
@@ -10,6 +10,7 @@ import { Auth, User, authState } from '@angular/fire/auth';
 import { traceUntilFirst } from '@angular/fire/performance';
 import { isNullOrUndefined } from 'util';
 import { remove, update } from 'firebase/database';
+import { ProfilesService } from './profiles.service.firebase';
 
 const keyField = "databaseKey";
 interface DateNightDataDatabaseEvent extends DateNightData {
@@ -27,30 +28,63 @@ export class EventsService implements OnDestroy {
   poppedEventsEmitter = new EventEmitter<DateNightData[]>();  
 
   private user : Observable<User | null> = EMPTY;
+  private currentProfile$ : Subscription;
+  private currentProfileIdSubject = new ReplaySubject<string>(1);
+  /*
   private currentProfileRef : DatabaseReference;
   private eventsRef : DatabaseReference;
   private poppedEventsRef : DatabaseReference;
+  */
 
   private  deleteInProgress = false;
 
-  constructor(private database: Database, private auth : Auth) { 
+  constructor(private database: Database, private auth : Auth, private profilesService: ProfilesService) { 
     if (auth) {
       this.user = authState(this.auth);
     }
     // TODO figure out the the profile name from settings/environment
+    this.currentProfile$ = profilesService.getUserProfiles().pipe(
+      map(profiles => {
+        const keys = Object.keys(profiles);
+        const selectedProfileIds = keys.filter(k => profiles[k].selected)
+
+        if (selectedProfileIds.length != 1)
+        {
+          console.error("Unexpected number of selected profiles", selectedProfileIds.length)
+          return;
+        }
+
+        this.currentProfileIdSubject.next(selectedProfileIds[0]);
+
+        /*
+        this.currentProfileRef = ref(this.database, `/profiles/${currentProfileId}`);
+        this.eventsRef = ref(this.database, `/profiles/${currentProfileId}/events`);
+        this.poppedEventsRef = ref(this.database, `/profiles/${currentProfileId}/poppedEvents`);
+        */
+      })
+    ).subscribe();
+
+    /*
     var profile = 'First';
     this.currentProfileRef = ref(this.database, `/profiles/${profile}`);
     this.eventsRef = ref(this.database, `/profiles/${profile}/events`);
     this.poppedEventsRef = ref(this.database, `/profiles/${profile}/poppedEvents`);
+    */
   }
 
   ngOnDestroy() {
-
+    this.currentProfile$.unsubscribe();
   }
 
+  currentProfileRef = () => this.currentProfileIdSubject.pipe(take(1), map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}`)));
+  eventsRef = () => this.currentProfileIdSubject.pipe(take(1), map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}/events`)));
+  poppedEventsRef = () => this.currentProfileIdSubject.pipe(take(1), map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}/poppedEvents`)));
+
   getPoppedEvents() : Observable<DateNightData[]> {
-    return listVal<DateNightData>(this.poppedEventsRef)
-    .pipe(map((x) => {
+    return this.poppedEventsRef()
+    .pipe(
+      switchMap(ref => listVal<DateNightData>(ref)),
+      map((x) => {
         const value : DateNightData[] = x == null ? [] : x;
         this.poppedEventsEmitter.emit(value);
         return value;
@@ -59,21 +93,27 @@ export class EventsService implements OnDestroy {
 
   addEvent(newEvent : DateNightData) : Observable<void> {
     //var newEventRef = push(this.eventsRef, newEvent);
-    var newEventKey = push(this.eventsRef).key;
 
-    const updates : any = {};
-    updates[`/${newEventKey}`] = newEvent;
+    return this.eventsRef().pipe(
+      switchMap(ref => {
+        var newEventKey = push(ref).key;
 
-    return from(update(this.eventsRef, updates)).
-    pipe(take(1));
-    //return fromRef(newEventRef, ListenEvent.added).pipe(map(x => {}));
+        const updates : any = {};
+        updates[`/${newEventKey}`] = newEvent;
+
+        return from(update(ref, updates)).
+        pipe(take(1));
+        //return fromRef(newEventRef, ListenEvent.added).pipe(map(x => {}));
+      }));
   }
 
   popEvent() : Observable<DateNightData | null> {
-    return listVal<DateNightDataDatabaseEvent>(this.eventsRef, { keyField : keyField})
-    .pipe(take(1),
-      map(events => {
-      if (events == null || events.length == 0)
+    return forkJoin({
+      events: this.eventsRef().pipe(switchMap(ref => listVal<DateNightDataDatabaseEvent>(ref, { keyField : keyField})), take(1)),
+      currentProfileRef: this.currentProfileRef()
+    }).pipe(
+      map(d => {
+      if (d.events == null || d.events.length == 0)
       {
         return {
           update: of(),
@@ -81,8 +121,8 @@ export class EventsService implements OnDestroy {
         }
       }
 
-      const idx = Math.floor(Math.random() * events.length);
-      const retVal = events[idx];
+      const idx = Math.floor(Math.random() * d.events.length);
+      const retVal = d.events[idx];
 
       const updates : any = {};
       updates[`/events/${retVal.databaseKey}`] = null;
@@ -90,7 +130,7 @@ export class EventsService implements OnDestroy {
       updates[`/poppedEvents/${retVal.databaseKey}`] = retVal;
 
       return {
-        update: update(this.currentProfileRef, updates),
+        update: update(d.currentProfileRef, updates),
         retVal: of(retVal),
       };
     }),
@@ -100,21 +140,24 @@ export class EventsService implements OnDestroy {
   }
 
   recyclePoppedEvents() : Observable<void> {
-    return listVal<DateNightDataDatabaseEvent>(this.poppedEventsRef, { keyField : keyField})
-    .pipe(map(poppedEvents => {
+    return forkJoin({
+      poppedEvents: this.poppedEventsRef().pipe(switchMap(ref => listVal<DateNightDataDatabaseEvent>(ref, { keyField : keyField})), take(1)),
+      currentProfileRef: this.currentProfileRef()
+    }).pipe(
+      map(d => {
       const updates : any = {};
-      if (!poppedEvents) {
+      if (!d.poppedEvents) {
         return;
       }
 
-      for (var ii = 0; ii < poppedEvents?.length; ii++ ) {
+      for (var ii = 0; ii < d.poppedEvents?.length; ii++ ) {
         // TODO may need to adjust the type so we don't add the "key" field back
-        var event = poppedEvents[ii];
+        var event = d.poppedEvents[ii];
         updates[`/events/${event.databaseKey}`] = event
         updates[`/poppedEvents/${event.databaseKey}`] = null
       }
 
-      return update(this.currentProfileRef, updates);
+      return update(d.currentProfileRef, updates);
     }),
     map(_ => {}),
     take(1)
@@ -122,22 +165,29 @@ export class EventsService implements OnDestroy {
   }
 
   numberOfEvents() : Observable<number> {
-    return listVal<DateNightData>(this.eventsRef)
-    .pipe(map(events => events ? events.length : 0), take(1));
+    return this.eventsRef().pipe(
+      switchMap(ref => listVal<DateNightData>(ref)),
+      map(events => events ? events.length : 0), 
+      take(1)
+    );
   }
 
   removePoppedEvent(idx : number) : Observable<void> {
     // TODO may want to keep a global list of all events for historical purposes.
 
-    return listVal<DateNightDataDatabaseEvent>(this.poppedEventsRef, { keyField : keyField})
-    .pipe(map(poppedEvents => {
-      if (poppedEvents && poppedEvents.length > idx)
+    return this.poppedEventsRef().pipe(
+    mergeMap(ref => forkJoin({
+      poppedEvents: listVal<DateNightDataDatabaseEvent>(ref, { keyField : keyField}),
+      poppedEventsRef: of(ref),
+    })),
+    map(d => {
+      if (d.poppedEvents && d.poppedEvents.length > idx)
       {
-        var event = poppedEvents[idx];
+        var event = d.poppedEvents[idx];
         const updates : any = {};
         updates[`${event.databaseKey}`] = null;
 
-        return update(this.poppedEventsRef, updates);
+        return update(d.poppedEventsRef, updates);
       }
       return of();
     }),
@@ -148,8 +198,9 @@ export class EventsService implements OnDestroy {
 
   /* TODO restrict the following to debug mode */
   getEvents() : Observable<DateNightData[]> {
-    return listVal<DateNightData>(this.eventsRef)
-    .pipe(map((x) => {
+    return this.eventsRef().pipe(
+      switchMap(ref => listVal<DateNightData>(ref)),
+      map((x) => {
         const value : DateNightData[] = x == null ? [] : x;
         this.eventsEmitter.emit(value);
         return value;
@@ -166,20 +217,28 @@ export class EventsService implements OnDestroy {
     updates['/events'] = eventUpdates;
     updates['/poppedEvents'] = poppedEventUpdates;
 
-    defaults.events.forEach(event => {
-      const newKey = push(this.eventsRef).key;
-      eventUpdates[`${newKey}`] = event;
-    })
+    return forkJoin({
+      eventsRef: this.eventsRef(),
+      poppedEventsRef: this.poppedEventsRef(),
+      currentProfileRef: this.currentProfileRef()
+    }).pipe(
+      switchMap(d => {
+        defaults.events.forEach(event => {
+          const newKey = push(d.eventsRef).key;
+          eventUpdates[`${newKey}`] = event;
+        })
 
-    defaults.poppedEvents.forEach(event => {
-      const newKey = push(this.poppedEventsRef).key;
-      poppedEventUpdates[`${newKey}`] = event;
-    })
+        defaults.poppedEvents.forEach(event => {
+          const newKey = push(d.poppedEventsRef).key;
+          poppedEventUpdates[`${newKey}`] = event;
+        })
 
-    // TODO may need to use "defer" instead so it only evaluates on subscribe
-    return from(update(this.currentProfileRef, updates))
-    .pipe(take(1))
-    ;
+        // TODO may need to use "defer" instead so it only evaluates on subscribe
+        return from(update(d.currentProfileRef, updates))
+        .pipe(take(1))
+        ;
+      })
+    );
   }
 
 
@@ -193,17 +252,20 @@ export class EventsService implements OnDestroy {
     }
     this.deleteInProgress = true;
 
-    return listVal<DateNightDataDatabaseEvent>(this.eventsRef, { keyField : keyField})
-    .pipe(
+    return this.eventsRef().pipe(
+      mergeMap(ref => forkJoin({
+        events: listVal<DateNightDataDatabaseEvent>(ref, { keyField : keyField}),
+        eventsRef: of(ref),
+      })),
       take(1),
-      map(events => {
-      if (events && events.length > idx)
+      map(d => {
+      if (d.events && d.events.length > idx)
       {
-        var event = events[idx];
+        var event = d.events[idx];
         const updates : any = {};
         updates[`${event.databaseKey}`] = null;
 
-        return update(this.eventsRef, updates);
+        return update(d.eventsRef, updates);
       }
       return of();
     }),
