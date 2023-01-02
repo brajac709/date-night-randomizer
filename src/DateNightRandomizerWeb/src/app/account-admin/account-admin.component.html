@@ -14,6 +14,16 @@
     <li>Enrolled Profiles</li>
     <li>
         <ul class="grid grid-cols-2">
+            <li>Invite User Email</li>
+            <li class="mb-4">
+                <input type="text" 
+                    [(ngModel)]="emailAddress"
+                    placeholder="user@example.com" 
+                    class="input h-[26px]" />
+                <!--
+                <input type="text" placeholder="user@example.com" class="input" />
+                -->
+            </li>
             <ng-container *ngFor="let profile of (profiles | async)">
                 <li class="pr-4">
                     <span [ngClass]="{'font-bold': profile.selected}">
@@ -35,8 +45,12 @@
                     <button (click)="onDeleteUserProfile(profile.id)"
                         [disabled]="profile.selected"
                         [ngClass]="{'bg-blue-500 hover:bg-blue-200': !profile.selected, 'bg-gray-600 cursor-not-allowed': profile.selected}"
-                        class="px-2 rounded-tr-md rounded-br-md border-black border border-l-0">
+                        class="px-2 border-black border border-l-0 border-r-0">
                         <i class="bi bi-trash3-fill"></i>
+                    </button>
+                    <button (click)="onInviteUserToProfile(profile.id)"
+                        class="px-2 rounded-tr-md rounded-br-md border-black border border-l-0 bg-blue-500 hover:bg-blue-200">
+                        <i class="bi bi-send"></i>
                     </button>
                 </li>
             </ng-container>

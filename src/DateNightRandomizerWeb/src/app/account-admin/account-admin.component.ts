@@ -37,6 +37,7 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
   currentProfileName : Observable<string>;
 
   public profileName : string = "";
+  public emailAddress : string = "";
 
   constructor(private profilesService : ProfilesService) { 
     this.profiles = this.profilesService.getUserProfiles().pipe(map(profiles => {
@@ -114,5 +115,20 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
     this.profilesService.rejectProfileInvitation(profileId)
       .pipe(take(1))
       .subscribe(() => console.log("Invitation Rejected"));
+  }
+
+  onInviteUserToProfile(profileId : string)
+  {
+    if (!this.emailAddress)
+    {
+      alert("Email must be set");
+    }
+
+    this.profilesService.inviteUserToProfileByEmail(this.emailAddress, profileId)
+      .pipe(take(1))
+      .subscribe({
+        next: () => console.log("Invitation sent"),
+        error: (e) => console.error(e)
+      })
   }
 }

@@ -7,6 +7,7 @@ import { traceUntilFirst } from '@angular/fire/performance';
 import { isNullOrUndefined } from 'util';
 import { remove, update } from 'firebase/database';
 import { collection } from 'firebase/firestore';
+import { Auth as FirebaseAuth } from 'firebase/auth'
 
 
 const databaseKey = 'databaseKey';
@@ -42,6 +43,11 @@ type Profile = {
   events:any[],
   poppedEvents:any[],
   users:ProfileUsers,
+}
+
+function encodeFirebaseKey(str : string) {
+  const encodedStr = encodeURIComponent(str);
+  return encodedStr.replace(".", "%2E")
 }
 
 @Injectable({
@@ -336,13 +342,28 @@ export class ProfilesService implements OnDestroy {
   }
 
   // TODO how to get user ID?
+  // Can possibly use the Admin SDK, but might need to create a separate web app to act as a server with the proper permissions
+  // Should be able to search users by email
+  inviteUserToProfileByEmail(email: string, profileId : string) {
+    const encodedEmail = encodeFirebaseKey(email);
+    return objectVal<string>(ref(this.database, `/userEmails/${encodedEmail}`))
+      .pipe(
+        take(1),
+        switchMap(uid => this.inviteUserToProfile(uid, profileId)),
+        catchError(err => {
+          console.error(err)
+          return of();
+        })
+      );
+  }
+
   inviteUserToProfile(uid: string, profileId : string) {
     return this.user.pipe(
       take(1),
       map(user => {
         return {
           user: of(user),
-          profileName: objectVal<string>(ref(this.database, `/profiles/${profileId}/name`))
+          profileName: objectVal<string>(ref(this.database, `/profiles/${profileId}/name`)).pipe(take(1))
         }
       }),
       mergeMap(d => forkJoin(d)),
@@ -355,12 +376,16 @@ export class ProfilesService implements OnDestroy {
         const updates : any = {};
         const now = new Date().getTime();
         updates[`/profiles/${profileId}/invitedUsers/${uid}`] = now;
-        updates[`/users/${d.user.uid}/profileInvitations/${profileId}`] = {
+        updates[`/users/${uid}/profileInvitations/${profileId}`] = {
           invitedTimestamp: now,
           name: d.profileName
         };
 
         return update(this.databaseRef, updates);
+      }),
+      catchError(e => {
+        console.error(e);
+        return of();
       })
     );
 
