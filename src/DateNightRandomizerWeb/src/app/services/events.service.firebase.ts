@@ -76,9 +76,9 @@ export class EventsService implements OnDestroy {
     this.currentProfile$.unsubscribe();
   }
 
-  currentProfileRef = () => this.currentProfileIdSubject.pipe(take(1), map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}`)));
-  eventsRef = () => this.currentProfileIdSubject.pipe(take(1), map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}/events`)));
-  poppedEventsRef = () => this.currentProfileIdSubject.pipe(take(1), map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}/poppedEvents`)));
+  currentProfileRef = () => this.currentProfileIdSubject.pipe(map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}`)));
+  eventsRef = () => this.currentProfileIdSubject.pipe(map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}/events`)));
+  poppedEventsRef = () => this.currentProfileIdSubject.pipe(map(currentProfileId => ref(this.database, `/profiles/${currentProfileId}/poppedEvents`)));
 
   getPoppedEvents() : Observable<DateNightData[]> {
     return this.poppedEventsRef()

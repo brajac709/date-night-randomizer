@@ -4,6 +4,7 @@ import { DateNightData } from '../../../DateNightRandomizerConsole/App/dateNight
 import { environment } from '../environments/environment';
 import { SpinnerService } from './services/spinner.service';
 import { MenuItem } from './contracts/menu-item';
+import { Observable, NEVER, Subscription } from 'rxjs';
 
 
 
@@ -18,6 +19,9 @@ export class AppComponent {
   // TODO lock this type down later
   events : any[] = [];
   popped : any[] = [];
+
+  events$ : Subscription | null = null;
+  eventsObs : Observable<DateNightData[]> = NEVER;
 
   selected? : string;
 
@@ -124,8 +128,11 @@ export class AppComponent {
   }
 
   private updateEvents()  {
-    this.eventsService.getEvents()
-      .subscribe(events => this.events = events);
+    this.eventsObs = this.eventsService.getEvents();
+    if (this.events$ != null) {
+      this.events$?.unsubscribe();
+    }
+    this.events$ = this.eventsObs.subscribe(events => this.events = events);
     this.eventsService.getPoppedEvents()
       .subscribe(events => this.popped = events);
   }
