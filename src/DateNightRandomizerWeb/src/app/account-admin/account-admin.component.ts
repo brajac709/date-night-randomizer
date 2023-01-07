@@ -1,8 +1,9 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { UserProfile } from 'firebase/auth';
 import { ProfileInvitation, ProfilesService, UserProfileData } from '../services/profiles.service.firebase';
 import {Observable, Subscription} from 'rxjs';
 import {map, take} from 'rxjs/operators';
+import { ReorderListDirective } from '../reorder-list/reorder-list.directive';
 
 type UserProfileView = UserProfileData & {
   id : string
@@ -38,6 +39,8 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
 
   public profileName : string = "";
   public emailAddress : string = "";
+
+  @ViewChildren(ReorderListDirective) listItems : QueryList<ReorderListDirective> | null= null;
 
   constructor(private profilesService : ProfilesService) { 
     this.profiles = this.profilesService.getUserProfiles().pipe(map(profiles => {
@@ -96,7 +99,12 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
     // TODO add some kind of animation transition to make the swap more apparent
     this.profilesService.selectUserProfile(profileId)
       .pipe(take(1))
-      .subscribe(() => console.log("New Profile selected"));
+      .subscribe(() => {
+        this.listItems?.forEach(item => {
+          item.triggerAnimation();
+        });
+        console.log("New Profile selected");
+      });
   }
 
   onDeleteUserProfile(profileId : string) : void {

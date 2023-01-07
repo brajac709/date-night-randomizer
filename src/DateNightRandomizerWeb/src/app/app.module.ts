@@ -30,6 +30,8 @@ import { provideRemoteConfig,getRemoteConfig } from '@angular/fire/remote-config
 import { provideStorage,getStorage } from '@angular/fire/storage';
 import { AccountInfoComponent } from './account-info/account-info.component';
 import { AccountAdminComponent } from './account-admin/account-admin.component';
+import { ReorderListDirective } from './reorder-list/reorder-list.directive';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,7 @@ import { AccountAdminComponent } from './account-admin/account-admin.component';
     LoginComponent,
     AccountInfoComponent,
     AccountAdminComponent,
+    ReorderListDirective,
   ],
   imports: [
     BrowserModule,
@@ -51,6 +54,7 @@ import { AccountAdminComponent } from './account-admin/account-admin.component';
     ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule,
+    BrowserAnimationsModule,
     // TODO cleanup Firebase modules that we don't use
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAnalytics(() => getAnalytics()),
