@@ -89,7 +89,8 @@ export class ProfilesService implements OnDestroy {
         }
         const userProfilesRef = ref(this.database, `/users/${user.uid}/profiles`);
         //return listVal<UserProfileDatabase>(userProfilesRef, { keyField: databaseKey })
-        return list(userProfilesRef)
+        // Only listen to Value event to avoid triggering multiple times for batch updates
+        return list(userProfilesRef, { events: [ListenEvent.value]})
       }),
       map(queries => {
         const retVal : UserProfiles = {};
