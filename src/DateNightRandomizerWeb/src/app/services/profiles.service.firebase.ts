@@ -346,7 +346,8 @@ export class ProfilesService implements OnDestroy {
   // Can possibly use the Admin SDK, but might need to create a separate web app to act as a server with the proper permissions
   // Should be able to search users by email
   inviteUserToProfileByEmail(email: string, profileId : string) {
-    const encodedEmail = encodeFirebaseKey(email);
+    // all emails are saved in lowercase
+    const encodedEmail = encodeFirebaseKey(email.toLowerCase());
     return objectVal<string>(ref(this.database, `/userEmails/${encodedEmail}`))
       .pipe(
         take(1),
@@ -369,6 +370,13 @@ export class ProfilesService implements OnDestroy {
       }),
       mergeMap(d => forkJoin(d)),
       switchMap(d => {
+        // TODO maybe can check this earlier...
+        if (uid == null) {
+          console.error("Invalid user");
+          // TODO figure out better error handling so we can show something on the client
+          return of();
+        }
+
         if (d.user == null) {
           console.error("Not authenticated");
           return of();
