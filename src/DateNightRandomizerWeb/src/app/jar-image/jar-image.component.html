@@ -3,7 +3,7 @@
     [style.height]="height"
     [style.width]="width"
 >
-    <g transform="translate(100,50)">
+    <g transform="translate(100,50)" [@dropInOut]="count" (@dropInOut.start)="onAnimationStart($event)" (@dropInOut.done)="onAnimationDone($event)">
         <rect *ngIf="!useHeart" class="stroke-red-600" x="0" y="0" [attr.width]="width" [attr.height]="height" />
         <path id="heart-icon" *ngIf="useHeart" transform="scale(3)"
             style="filter: drop-shadow(3px 3px 3px rgb(236, 38, 38))"

@@ -1,11 +1,27 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges} from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { trigger, transition, style, stagger, animate, query,AnimationEvent, AnimationBuilder } from '@angular/animations';
 
 
 
 @Component({
   selector: 'app-jar-image',
   templateUrl: './jar-image.component.html',
-  styleUrls: ['./jar-image.component.scss']
+  styleUrls: ['./jar-image.component.scss'],
+  animations: [
+    trigger("dropInOut", [
+      transition(':enter, * => 0, * => -1', []),
+      transition(':increment', [
+        query('circle:enter',[
+          /*
+          style({transform: 'translateY(-106px)'}),
+          stagger(50, [
+            animate('.3s ease-in', style({transform: 'translateY(0px)'}))
+          ]),
+          */
+        ], {optional: true})
+      ])
+    ])
+  ]
 })
 export class JarImageComponent implements OnInit, OnChanges {
 
@@ -29,7 +45,7 @@ export class JarImageComponent implements OnInit, OnChanges {
 
   
 
-  constructor() { }
+  constructor(private builder: AnimationBuilder) { }
 
   ngOnInit(): void {
   }
@@ -60,6 +76,57 @@ export class JarImageComponent implements OnInit, OnChanges {
 
   heightClass() {
     return `h-\[${this.height}px\]`
+  }
+
+  onAnimationStart(event: AnimationEvent)
+  {
+    const circles = event.element.getElementsByTagName('circle');
+    
+    /*
+    Array.from(circles).forEach((el : any) => {
+      const cy = el.attributes['cy'].value;
+      el.style['transform'] = `translateY(-${cy}px)`;
+    });
+    */
+  }
+
+  onAnimationDone(event: AnimationEvent) {
+    if (event.fromState == 'void' || event.toState == 'void') {
+      // TODO Not sure about toState but for now, I don't want to deal with the math
+      return;
+    }
+
+    const diff = Number.parseInt(event.toState) - Number.parseInt(event.fromState);
+    const circles = Array.from(event.element.getElementsByTagName('circle'));
+
+    if (diff > 0)
+    {
+      circles.slice(-diff).forEach(this.animateDropIn.bind(this))
+    }
+
+    if (diff < 0) {
+      // TODO the element is already gone at this point... so we can't animate it leaving
+      // Need to determine what my Pop/Remove animation is really going to look like
+      //circles.slice(diff).forEach(this.animateDropOut.bind(this))
+    }
+  }
+
+  private animateDropIn(el:any, idx:number) {
+    const cy = el.attributes['cy'].value;
+    const dropAnimation = this.builder.build([
+      style({transform: `translateY(-${cy}px)`}),
+      animate(`.3s ${50*idx}ms ease-in`, style({transform: `translateY(0px)`}))
+    ]);
+    dropAnimation.create(el).play();
+  }
+
+  private animateDropOut(el:any, idx:number) {
+    const cy = el.attributes['cy'].value;
+    const dropAnimation = this.builder.build([
+      style({transform: `translateY(0px)`}),
+      animate(`.3s ${50*idx}ms ease-out`, style({transform: `translateY(-${cy}px)`}))
+    ]);
+    dropAnimation.create(el).play();
   }
 
   private generateRectPos(idx : number) {
