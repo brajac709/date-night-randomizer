@@ -253,8 +253,9 @@ export class EventsService implements OnDestroy {
     this.deleteInProgress = true;
 
     return this.eventsRef().pipe(
+      take(1),
       mergeMap(ref => forkJoin({
-        events: listVal<DateNightDataDatabaseEvent>(ref, { keyField : keyField}),
+        events: listVal<DateNightDataDatabaseEvent>(ref, { keyField : keyField}).pipe(take(1)),
         eventsRef: of(ref),
       })),
       take(1),
