@@ -95,6 +95,7 @@ export class EventsService implements OnDestroy {
     //var newEventRef = push(this.eventsRef, newEvent);
 
     return this.eventsRef().pipe(
+      take(1),
       switchMap(ref => {
         var newEventKey = push(ref).key;
 
@@ -109,7 +110,7 @@ export class EventsService implements OnDestroy {
 
   popEvent() : Observable<DateNightData | null> {
     return forkJoin({
-      events: this.eventsRef().pipe(switchMap(ref => listVal<DateNightDataDatabaseEvent>(ref, { keyField : keyField})), take(1)),
+      events: this.eventsRef().pipe(take(1),switchMap(ref => listVal<DateNightDataDatabaseEvent>(ref, { keyField : keyField})), take(1)),
       currentProfileRef: this.currentProfileRef()
     }).pipe(
       map(d => {
