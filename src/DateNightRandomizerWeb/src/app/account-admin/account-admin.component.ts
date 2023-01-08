@@ -139,4 +139,8 @@ export class AccountAdminComponent implements OnInit, OnDestroy {
         error: (e) => console.error(e)
       })
   }
+
+  trackByFn(idx: number, item:any) {
+    return item.name;
+  }
 }

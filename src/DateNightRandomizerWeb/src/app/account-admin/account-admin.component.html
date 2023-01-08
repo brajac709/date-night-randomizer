@@ -24,8 +24,8 @@
                 <input type="text" placeholder="user@example.com" class="input" />
                 -->
             </li>
-            <ng-container *ngFor="let profile of (profiles | async)">
-                <li class="pr-4" *appReorderList>
+            <ng-container *ngFor="let profile of (profiles | async); trackBy:trackByFn">
+                <li class="pr-4" appReorderList>
                     <span [ngClass]="{'font-bold': profile.selected}">
                         {{profile.name}}
                     </span>
@@ -34,7 +34,7 @@
                         - Current Profile
                     </span>
                 </li>
-                <li class="pb-2" *appReorderList>
+                <li class="pb-2" appReorderList>
                     <!-- todo add text and make them look more like buttons -->
                     <button (click)="onSelectProfile(profile.id)"
                         [disabled]="profile.selected"
