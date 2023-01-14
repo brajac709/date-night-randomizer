@@ -1,5 +1,5 @@
 
-<div class="grid grid-cols-6 h-screen bg-red-100">
+<div class="grid grid-cols-6 grid-rows-[1fr_1fr_10fr] min-h-screen bg-red-100">
   <!-- Toolbar -->
   <!--
   <div class="col-span-6 h-px-60 flex items-center bg-[#1976d2] text-white font-[600]" role="banner">
@@ -31,7 +31,7 @@
   </div>
   <!-- Menu Sidebar -->
   <div 
-    class="col-span-1 row-span-2 row-start-2 h-screen border-2 border-collapse"
+    class="col-span-1 row-span-2 row-start-2 h-[calc(100%_- 60px)] h-full border-2 border-collapse"
   >
     <app-menu-bar 
       [buttons]="buttons"
@@ -67,7 +67,7 @@
 
   <!-- Popped Events view-->
   <!-- TOOD maybe have this rotate through the list randomly -->
-  <div class="col-span-1 row-span-2 row-start-2 h-screen border-2 border-collapse">
+  <div class="col-span-1 row-span-2 row-start-2 h-[calc(100%_- 60px)] h-full border-2 border-collapse">
 
     <app-event-view [event]="popped[popped.length-1]"></app-event-view>
   </div>
