@@ -1,13 +1,13 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, EMPTY, BehaviorSubject, ReplaySubject, Subscription, of, take, forkJoin, throwError } from 'rxjs';
 import { switchMap, map, mergeMap, catchError } from 'rxjs/operators';
-import { Database, ref, objectVal, listVal, DatabaseReference, push, set, fromRef, ListenEvent, list} from '@angular/fire/database';
-import { Auth, User, authState } from '@angular/fire/auth';
-import { traceUntilFirst } from '@angular/fire/performance';
-import { isNullOrUndefined } from 'util';
-import { remove, update } from 'firebase/database';
-import { collection } from 'firebase/firestore';
-import { Auth as FirebaseAuth } from 'firebase/auth'
+import { DatabaseReference, ListenEvent} from '@angular/fire/database';
+import { User } from '@angular/fire/auth';
+//import { traceUntilFirst } from '@angular/fire/performance';
+//import { remove, update } from 'firebase/database';
+//import { collection } from 'firebase/firestore';
+//import { Auth as FirebaseAuth } from 'firebase/auth'
+import { FirebaseService } from './firebase.service';
 
 
 const databaseKey = 'databaseKey';
@@ -75,10 +75,9 @@ export class ProfilesService implements OnDestroy {
 
   private  deleteInProgress = false;
 
-  constructor(private database: Database, private auth : Auth) { 
-    if (auth) {
-      this.user = authState(this.auth);
-    }
+  // TODO replace these with the FirebaseService instead so we can mock those methods out....
+  constructor(private firebaseService: FirebaseService) { 
+    this.user = this.firebaseService.authState();
 
     //this.userProfiles = this.user.pipe(
     //this.user.pipe(
@@ -87,10 +86,10 @@ export class ProfilesService implements OnDestroy {
         if (user == null) {
           return [];
         }
-        const userProfilesRef = ref(this.database, `/users/${user.uid}/profiles`);
+        const userProfilesRef = this.firebaseService.ref(`/users/${user.uid}/profiles`);
         //return listVal<UserProfileDatabase>(userProfilesRef, { keyField: databaseKey })
         // Only listen to Value event to avoid triggering multiple times for batch updates
-        return list(userProfilesRef, { events: [ListenEvent.value]})
+        return this.firebaseService.list(userProfilesRef, { events: [ListenEvent.value]})
       }),
       map(queries => {
         const retVal : UserProfiles = {};
@@ -104,8 +103,8 @@ export class ProfilesService implements OnDestroy {
               name: ""
             };
             
-            const profileNameRef = ref(this.database, `/profiles/${key}/name`);
-            nameObservables[key] = objectVal<string>(profileNameRef).pipe(take(1),catchError(error => { console.log(error); return ""}));
+            const profileNameRef = this.firebaseService.ref(`/profiles/${key}/name`);
+            nameObservables[key] = this.firebaseService.objectVal<string>(profileNameRef).pipe(take(1),catchError(error => { console.log(error); return ""}));
           }
         })
         // TODO not sure this is the right way to retun this...
@@ -156,7 +155,7 @@ export class ProfilesService implements OnDestroy {
         if (user == null) {
           return throwError(() => "Not authenticated")
         }
-        const profileInvitations = list(ref(this.database, `/users/${user.uid}/profileInvitations`));
+        const profileInvitations = this.firebaseService.list(this.firebaseService.ref(`/users/${user.uid}/profileInvitations`));
 
         return profileInvitations;
       }),
@@ -180,17 +179,17 @@ export class ProfilesService implements OnDestroy {
     ).subscribe();
 
     // TODO where user == ????
-    //this.userProfilesRef = ref(this.database, `/user/${this.user.uid}/profiles`);
+    //this.userProfilesRef = this.firebaseService.ref(`/user/${this.user.uid}/profiles`);
 
-    this.databaseRef = ref(this.database);
-    this.profilesRef = ref(this.database, '/profiles');
+    this.databaseRef = this.firebaseService.ref();
+    this.profilesRef = this.firebaseService.ref('/profiles');
 
     // TODO probably don't need these
     // TODO figure out the the profile name from settings/environment
     var profile = 'First';
-    this.currentProfileRef = ref(this.database, `/profiles/${profile}`);
-    this.eventsRef = ref(this.database, `/profiles/${profile}/events`);
-    this.poppedEventsRef = ref(this.database, `/profiles/${profile}/poppedEvents`);
+    this.currentProfileRef = this.firebaseService.ref(`/profiles/${profile}`);
+    this.eventsRef = this.firebaseService.ref(`/profiles/${profile}/events`);
+    this.poppedEventsRef = this.firebaseService.ref(`/profiles/${profile}/poppedEvents`);
   }
 
   ngOnDestroy() {
@@ -207,7 +206,7 @@ export class ProfilesService implements OnDestroy {
     // TODO check if anything with the same name exists?? Maybe?? Per user???
     // What if a user is added to one with the same name later?
     // Maybe name doesn't need to be unique
-    var newProfileKey = push(this.profilesRef).key;
+    var newProfileKey = this.firebaseService.push(this.profilesRef).key;
 
     return this.user.pipe(
       take(1),
@@ -228,7 +227,7 @@ export class ProfilesService implements OnDestroy {
         updates[`/profiles/${newProfileKey}`] = newProfile;
         updates[`/users/${user.uid}/profiles/${newProfileKey}`] = false; // not active
 
-        return update(this.databaseRef, updates);
+        return this.firebaseService.update(this.databaseRef, updates);
       })
     );
 
@@ -256,7 +255,7 @@ export class ProfilesService implements OnDestroy {
         updates[`/profiles/${profileId}/users/${user.uid}`] = true;
         updates[`/users/${user.uid}/profiles/${profileId}`] = true; 
 
-        return update(this.databaseRef, updates);
+        return this.firebaseService.update(this.databaseRef, updates);
       })
     );
   }
@@ -269,7 +268,7 @@ export class ProfilesService implements OnDestroy {
       take(1),
       // TODO maybe only do this if keepIfNoUsers is false
       mergeMap(user => {
-        const profileUsersCount = list(ref(this.database, `/profiles/${profileId}/users`))
+        const profileUsersCount = this.firebaseService.list(this.firebaseService.ref(`/profiles/${profileId}/users`))
           .pipe(
             take(1),
             map(profileUsers => profileUsers.length)
@@ -293,7 +292,7 @@ export class ProfilesService implements OnDestroy {
           updates[`/profiles/${profileId}/users/${user.uid}`] = null;
         }
 
-        return update(this.databaseRef, updates);
+        return this.firebaseService.update(this.databaseRef, updates);
       })
     );
 
@@ -319,7 +318,7 @@ export class ProfilesService implements OnDestroy {
         updates[`/profiles/${profileId}/invitedUsers/${user.uid}`] = null;
         updates[`/users/${user.uid}/profileInvitations/${profileId}`] = null;
 
-        return update(this.databaseRef, updates);
+        return this.firebaseService.update(this.databaseRef, updates);
       })
     );
   }
@@ -337,7 +336,7 @@ export class ProfilesService implements OnDestroy {
         updates[`/profiles/${profileId}/invitedUsers/${user.uid}`] = null;
         updates[`/users/${user.uid}/profileInvitations/${profileId}`] = null;
 
-        return update(this.databaseRef, updates);
+        return this.firebaseService.update(this.databaseRef, updates);
       })
     );
   }
@@ -348,7 +347,7 @@ export class ProfilesService implements OnDestroy {
   inviteUserToProfileByEmail(email: string, profileId : string) {
     // all emails are saved in lowercase
     const encodedEmail = encodeFirebaseKey(email.toLowerCase());
-    return objectVal<string>(ref(this.database, `/userEmails/${encodedEmail}`))
+    return this.firebaseService.objectVal<string>(this.firebaseService.ref(`/userEmails/${encodedEmail}`))
       .pipe(
         take(1),
         switchMap(uid => this.inviteUserToProfile(uid, profileId)),
@@ -365,7 +364,7 @@ export class ProfilesService implements OnDestroy {
       map(user => {
         return {
           user: of(user),
-          profileName: objectVal<string>(ref(this.database, `/profiles/${profileId}/name`)).pipe(take(1))
+          profileName: this.firebaseService.objectVal<string>(this.firebaseService.ref(`/profiles/${profileId}/name`)).pipe(take(1))
         }
       }),
       mergeMap(d => forkJoin(d)),
@@ -390,7 +389,7 @@ export class ProfilesService implements OnDestroy {
           name: d.profileName
         };
 
-        return update(this.databaseRef, updates);
+        return this.firebaseService.update(this.databaseRef, updates);
       }),
       catchError(e => {
         console.error(e);
